@@ -174,6 +174,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
+        willvincent\Rateable\RateableServiceProvider::class,
+
     ])->toArray(),
 
     /*
