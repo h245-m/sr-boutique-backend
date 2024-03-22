@@ -27,6 +27,9 @@ Route::middleware('loggedIn')->group( function() {
     
     Route::middleware('admin')->group( function() {
         Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
+        Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_category']);
+        Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
+        
     });
 
 

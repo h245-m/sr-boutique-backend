@@ -7,6 +7,7 @@ use App\Http\Requests\Product\IndexProductRequest;
 use App\Models\Product;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 
@@ -15,134 +16,108 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    //client , admin , super
     public function index(IndexProductRequest $request)
     {
         $data = $request->validated();
 
         $query = Product::isLive(true);
 
-        $query->when(isset($data['query']) , function($query) use($data){
-           $query->where('name' , 'like' , '%'.$data['query'].'%'); 
+        $query->when(isset($data['query']), function ($query) use ($data) {
+            $query->where('name', 'like', '%' . $data['query'] . '%');
         })
-        ->when(isset($data['is_offer']) , function($query) use($data){
-            $query->where('special_offer' , '>' , Carbon::now());
-        })
-        ->when(isset($data['is_daily_offer']) , function($query) use($data){
-            $query->where('daily_offer' , '>' , Carbon::now());
-        })
-        ->when(isset($data['sort_by']) , function($query) use($data){
-            if($data['asc']){
-                $query->orderBy($data['sort_by']);
-            } else{
-                $query->orderByDesc($data['sort_by']);
-            }
-        });
+            ->when(isset($data['sort_by']), function ($query) use ($data) {
+                if ($data['asc']) {
+                    $query->orderBy($data['sort_by']);
+                } else {
+                    $query->orderByDesc($data['sort_by']);
+                }
+            });
 
         $products = $query->paginate($data['per_page'] ?? 15);
 
-
-        return $this->respondOk($products, 'Products fetched successfully');
+        return $this->respondOk(ProductResource::collection($products)->response()->getData(), 'Products fetched successfully');
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
      */
 
-    //admin , super
     public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = $request->user->id;
-        
-        if ($request->hasFile('image')) { 
-            $file = $request->file('image');
-            $name =  uniqid() . '.' . $file->extension();
-            $file->storeAs('public/images/categories/'. $data['category_id'] . "/products/" , $name);
-            $data['image'] = 'storage/images/categories/'. $data['category_id'] . "/products/" .$name;
-        } 
 
         $product = Product::create($data);
-        return $this->respondCreated($product, 'product created successfully');
-        
+
+        if ($request->hasFile('image')) {
+            $product->addMediaFromRequest('image')->toMediaCollection("main");
+        }
+
+        if ($request->hasFile('additional_images')) {
+            $product
+                ->addMultipleMediaFromRequest(['additional_images'])
+                ->each(function ($fileAdder) {
+                    $fileAdder->toMediaCollection("additional_images");
+                });
+        }
+
+        return $this->respondCreated(ProductResource::make($product), 'product created successfully');
     }
 
     /**
      * Display the specified resource.
      */
 
-     //client , admin , super
     public function show(Product $product)
     {
         if (!$product->live) {
             return $this->respondNotFound('Product not found.');
         }
-        return $this->respondOk($product, 'product fetched successfully');
+
+        // $product->load(['ratings' => function($query){
+        //     return $query->select('id' , 'rating' , 'comment' , 'rateable_id')->paginate(15);
+        // }]);
+
+        $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id')->paginate());
+
+        return $this->respondOk(ProductResource::make($product), 'Product fetched successfully');
     }
 
-    #TODO("Optimize -------------------------------------------------------------------------------------------------------------")
     /**
      * Update the specified resource in storage.
      */
-
-     //admin , super
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
-        $category_id = $data['category_id'] ?? $product->category_id;
 
-        if ($request->hasFile('image') && isset($data['category_id'])) {
-            
+        if ($request->hasFile('image')) {
 
-            if(File::exists($product->image)) {
-                File::delete($product->image);
-            }   
+            if ($request->hasFile('image')) {
+                $product->clearMediaCollection("main");
+                $product->addMediaFromRequest('image')->toMediaCollection("main");
+            }
 
-            $file = $request->file('image');
-            $name =  uniqid() . '.' . $file->extension();
-            $file->storeAs('public/images/categories/'. $category_id . "/products/" , $name);
-            $data['image'] = 'storage/images/categories/'.$category_id. "/products/" .$name;
+            if ($request->hasFile('additional_images')) {
+                $product->clearMediaCollection("additional_images");
 
-        } else if (!$request->hasFile('image') && isset($data['category_id']) ) {
-            
-            // move image to new folder
-
-            if(File::exists($product->image)) {
-                $name = basename($product->image);
-                $destinationDirectory = 'storage/images/categories/'. $data['category_id'] . '/products/';
-
-                // Destination file path
-                $destinationFilePath = $destinationDirectory . $name;
-
-                // Create the destination directory if it does not exist
-                if (!File::exists($destinationDirectory)) {
-                    File::makeDirectory($destinationDirectory, 0755, true);
-                }
-
-
-                File::move($product->image, $destinationFilePath);
-                $data['image'] = 'storage/images/categories/'.$data['category_id']. "/products/" .$name;
-
-            }   
-
-        } 
+                $product
+                    ->addMultipleMediaFromRequest(['additional_images'])
+                    ->each(function ($fileAdder) {
+                        $fileAdder->toMediaCollection("additional_images");
+                    });
+            }
+        }
 
         $product->update($data);
-        return $this->respondOk($product, 'product updated successfully');
+        return $this->respondOk(ProductResource::make($product), 'Product updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
 
-    //admin , super
     public function destroy(Product $product)
     {
-        if(File::exists($product->image)) {
-            File::delete($product->image);
-        }   
-        
         $product->delete();
         return $this->respondNoContent();
     }
