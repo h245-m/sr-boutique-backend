@@ -72,9 +72,9 @@ class ProductController extends Controller
             return $this->respondNotFound('Product not found.');
         }
 
-        $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id')->paginate());
-        $product->setRelation('colors', $product->attributes()->where('type', 'Color')->get());
-        $product->setRelation('sizes', $product->attributes()->where('type', 'Size')->get());
+        // $product->setRelation('ratings',  $product-ww    >ratings()->select('id', 'rating', 'comment', 'rateable_id')->paginate());
+        $product->setRelation('colors', $product->attributes()->where('type', 0)->get());
+        $product->setRelation('sizes', $product->attributes()->where('type', 1)->get());
 
         return $this->respondOk(ProductResource::make($product), 'Product fetched successfully');
     }

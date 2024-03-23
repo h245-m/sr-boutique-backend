@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AttributeType;
+use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,9 +17,9 @@ class Attribute extends Model
         return $this->belongsTo(Product::class);
     }
 
-    protected function type(): Attribute
+    protected function type(): CastsAttribute
     {
-        return Attribute::make(
+        return CastsAttribute::make(
             get: fn ($value) => AttributeType::fromValue($value)->key,
             set: fn ($value) => AttributeType::fromKey($value),
         );

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Attribute;
+namespace App\Http\Requests\Category;
 
-use App\Rules\ValidateAttribute;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAttributeRequest extends FormRequest
+class ShowSubCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +22,8 @@ class UpdateAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'required|in:Color,Size',
-            'value' => ['required', 'string' , new ValidateAttribute(request()->input('type'))],
+            'query' => 'string',
+            'per_page' => 'integer|min:1|max:30',
         ];
     }
 }

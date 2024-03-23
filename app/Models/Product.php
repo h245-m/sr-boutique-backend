@@ -3,12 +3,10 @@
 namespace App\Models;
 
 use App\Http\Traits\CustomRateable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use willvincent\Rateable\Rateable;
 
 class Product extends Model implements HasMedia
 {

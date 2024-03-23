@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\DeleteProductImages;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -24,5 +25,11 @@ class Category extends Model implements HasMedia
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function delete()
+    {
+        DeleteProductImages::dispatch($this);
+        parent::delete();
     }
 }

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\ShowAdminCategoryRequest;
 use App\Http\Requests\Category\ShowCategoryRequest;
+use App\Http\Requests\Category\ShowSubCategoryRequest;
 use App\Models\Category;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Product;
 use App\Services\CategoryService;
-use Carbon\Carbon;
 
 class CategoryController extends Controller
 {
@@ -68,12 +68,6 @@ class CategoryController extends Controller
         $query->when(isset($data['query']) , function($query) use($data){
             $query->where('name' , 'like' , '%'.$data['query'].'%'); 
          })
-         ->when(isset($data['is_offer']) , function($query) use($data){
-             $query->where('special_offer' , '>' , Carbon::now());
-         })
-         ->when(isset($data['is_daily_offer']) , function($query) use($data){
-             $query->where('daily_offer' , '>' , Carbon::now());
-         })
          ->when(isset($data['sort_by']) , function($query) use($data){
              if($data['asc']){
                  $query->orderBy($data['sort_by']);
@@ -85,6 +79,26 @@ class CategoryController extends Controller
         $category->products = $query->paginate($perPage);
 
         return $this->respondOk(CategoryResource::make($category), "Category fetched successfully with it's products");
+    }
+
+
+    /**
+     * Display the specified resource.
+     */
+    public function show_sub_category(ShowSubCategoryRequest $request)
+    {
+        $data = $request->validated();
+        $perPage = $data['per_page'] ?? 15;
+
+        $query = Category::query()->whereNotNull('parent_id')->select("id" , "name");
+
+        $query->when(isset($data['query']) , function($query) use($data){
+            $query->where('name' , 'like' , '%'.$data['query'].'%'); 
+        });
+
+        $categories = $query->paginate($perPage);
+
+        return $this->respondOk($categories, 'Categories fetched successfully');
     }
 
     /**
@@ -101,12 +115,6 @@ class CategoryController extends Controller
             $query->isLive($data['live']);
          })->when(isset($data['query']) , function($query) use($data){
             $query->where('name' , 'like' , '%'.$data['query'].'%'); 
-         })
-         ->when(isset($data['is_offer']) , function($query) use($data){
-             $query->where('special_offer' , '>' , Carbon::now());
-         })
-         ->when(isset($data['is_daily_offer']) , function($query) use($data){
-             $query->where('daily_offer' , '>' , Carbon::now());
          })
          ->when(isset($data['sort_by']) , function($query) use($data){
              if($data['asc']){

@@ -21,14 +21,16 @@ class UserSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@admin.com',
             'password' => bcrypt('12345678'),
-            'phone' => '0123456789'
+            'phone' => '0123456789',
+            'email_verified_at' => now()
         ]);
 
         $client = User::create([
             'name' => 'Kimo',
             'email' => 'kareemhussen500@gmail.com',
             'password' => bcrypt('12345678'),
-            'phone' => '0123456789'
+            'phone' => '0123456789',
+            'email_verified_at' => now()
         ]);
 
         $admin->assignRole($adminRole);

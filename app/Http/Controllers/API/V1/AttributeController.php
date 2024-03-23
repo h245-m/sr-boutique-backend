@@ -25,7 +25,6 @@ class AttributeController extends Controller
     public function store(StoreAttributeRequest $request)
     {
         $data = $request->validated();
-
         $attribute = Attribute::create($data);
         
         return $this->respondCreated($attribute, 'Attribute created successfully');

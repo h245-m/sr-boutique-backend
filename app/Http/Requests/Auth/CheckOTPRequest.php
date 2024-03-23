@@ -1,30 +1,32 @@
 <?php
 
-namespace App\Http\Requests\Attribute;
+namespace App\Http\Requests\Auth;
 
-use App\Rules\ValidateAttribute;
+use App\Http\Controllers\AuthController;
+use App\Rules\MinMaxWordsRule;
+use App\Rules\PhoneValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAttributeRequest extends FormRequest
+class CheckOTPRequest  extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
+
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'type' => 'required|in:Color,Size',
-            'value' => ['required', 'string' , new ValidateAttribute(request()->input('type'))],
+            'otp' => 'required|integer|digits:6',
         ];
     }
 }
