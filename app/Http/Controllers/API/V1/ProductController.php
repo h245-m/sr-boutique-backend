@@ -7,9 +7,7 @@ use App\Http\Requests\Product\IndexProductRequest;
 use App\Models\Product;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
-use App\Http\Resources\ProductResource;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\File;
+use App\Http\Resources\ProductResource; 
 
 class ProductController extends Controller
 {
@@ -74,11 +72,9 @@ class ProductController extends Controller
             return $this->respondNotFound('Product not found.');
         }
 
-        // $product->load(['ratings' => function($query){
-        //     return $query->select('id' , 'rating' , 'comment' , 'rateable_id')->paginate(15);
-        // }]);
-
         $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id')->paginate());
+        $product->setRelation('colors', $product->attributes()->where('type', 'Color')->get());
+        $product->setRelation('sizes', $product->attributes()->where('type', 'Size')->get());
 
         return $this->respondOk(ProductResource::make($product), 'Product fetched successfully');
     }

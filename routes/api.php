@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\AttributeController;
 use App\Http\Controllers\API\V1\CategoryController;
 use App\Http\Controllers\API\V1\ProductController;
 use App\Http\Controllers\API\V1\RatingController;
@@ -38,6 +39,8 @@ Route::middleware('loggedIn')->group( function() {
         Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
         Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
         Route::apiResource("rating", RatingController::class , ['only' => ['index']]);
+        Route::apiResource("attribute", AttributeController::class);
+
     });
     
 });

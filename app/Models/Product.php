@@ -37,9 +37,14 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Order::class , 'order_product')->withPivot('quantity');
     }
 
+    public function attributes(){
+        return $this->hasMany(Attribute::class);
+    }
+
     public function scopeIsLive($query , bool $live)
     {
         return $query->where('live', $live);
     }
 
+    
 }
