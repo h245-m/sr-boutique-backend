@@ -41,7 +41,7 @@ class Product extends Model implements HasMedia
 
     public function users_wish_list()
     {
-        return $this->belongsToMany(User::class , 'wish_lists')->withPivot('quantity');
+        return $this->belongsToMany(User::class , 'wish_list');
     }
 
     public function scopeIsLive($query , bool $live)

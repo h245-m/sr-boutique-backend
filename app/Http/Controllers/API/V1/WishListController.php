@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\WishList\DeleteWishListRequest;
 use App\Http\Requests\WishList\IndexWishListRequest;
 use App\Http\Requests\WishList\StoreWishListRequest;
 use App\Http\Requests\WishList\UpdateWishListRequest;
 use App\Http\Resources\WishListResource;
+use Illuminate\Http\Request;
 
 class WishListController extends Controller
 {
@@ -31,6 +31,7 @@ class WishListController extends Controller
                     $query->orderByDesc($data['sort_by']);
                 }
             });
+            
 
         $wishList_products = $query->paginate($data['per_page'] ?? 15);
 
@@ -71,12 +72,15 @@ class WishListController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DeleteWishListRequest $request)
+    public function destroy(string $id , Request $request)
     {
-        $data = $request->validated();
         $user = $request->user;
-        $user->wish_list()->detach($data['product_id']);
 
+        if (!$user->wish_list()->where('product_id' , $id)->exists()) {
+            return $this->respondNotFound('WishList not found');
+        }
+        
+        $user->wish_list()->detach($id);
         return $this->respondNoContent();
     }
 }

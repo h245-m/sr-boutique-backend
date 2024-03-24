@@ -45,7 +45,6 @@ trait ResponsesTrait
     {
         return response([
             'message' => $message,
-            'errors' => null,
         ], 404);
     }
 

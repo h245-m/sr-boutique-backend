@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Requests\WishList;
-
+namespace App\Http\Requests\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteWishListRequest extends FormRequest
+class UpdateRatingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +21,8 @@ class DeleteWishListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer|exists:products,id',
+            'rating' => 'integer|min:1|max:5',
+            'comment' => 'string|max:255',
         ];
     }
 }
