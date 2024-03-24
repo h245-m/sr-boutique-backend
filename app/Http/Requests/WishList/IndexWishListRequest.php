@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Product;
+namespace App\Http\Requests\WishList;
 
-use App\Rules\EmptyWith;
-use App\Rules\EmptyWithRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexProductRequest extends FormRequest
+class IndexWishListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

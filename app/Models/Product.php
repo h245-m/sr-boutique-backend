@@ -39,10 +39,15 @@ class Product extends Model implements HasMedia
         return $this->hasMany(Attribute::class);
     }
 
+    public function users_wish_list()
+    {
+        return $this->belongsToMany(User::class , 'wish_lists')->withPivot('quantity');
+    }
+
     public function scopeIsLive($query , bool $live)
     {
         return $query->where('live', $live);
     }
-
     
+
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Product;
+namespace App\Http\Requests\WishList;
 
-use App\Rules\EmptyWith;
-use App\Rules\EmptyWithRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexProductRequest extends FormRequest
+class StoreWishListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +22,7 @@ class IndexProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'query' => 'string',
-            'sort_by' => 'string|in:id,name,price',
-            'asc' => 'boolean|required_with:sort_by',
-            'per_page' => 'integer|min:1|max:30',
+            'product_id' => 'required|integer|exists:products,id',
         ];
     }
 }
