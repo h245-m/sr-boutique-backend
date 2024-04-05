@@ -29,7 +29,7 @@ class Category extends Model implements HasMedia
 
     public function delete()
     {
-        DeleteProductImages::dispatch($this);
+        // DeleteProductImages::dispatch($this);
         parent::delete();
     }
 }

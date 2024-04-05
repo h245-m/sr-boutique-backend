@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Rating;
+namespace App\Http\Requests\Auth;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRatingRequest extends FormRequest
+class CheckOTPForgetPassowrdRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -16,14 +18,14 @@ class UpdateRatingRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'command' => 'required|string|max:255',
-            'level' => 'required|integer|in:0,1,2',
-            'api_key' => 'required|string|max:255',
+            'email' => ['required', 'string', 'email'],
+            'otp' => ['required', 'string', 'digits:6'],
         ];
     }
+
 }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Rating;
+namespace App\Http\Requests\HomeGroup;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRatingRequest extends FormRequest
+class StoreHomeGroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +22,7 @@ class UpdateRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'command' => 'required|string|max:255',
-            'level' => 'required|integer|in:0,1,2',
-            'api_key' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
         ];
     }
 }

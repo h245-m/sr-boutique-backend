@@ -8,3 +8,7 @@ Route::post("/check-otp", [AuthController::class, "check_otp"])->middleware("log
 Route::post("/login", [AuthController::class, "login"]);
 Route::get("/logout", [AuthController::class, "logout"])->middleware("loggedIn");
 Route::get("/logout-all", [AuthController::class, "logoutAllDevices"])->middleware("loggedIn");
+
+Route::get("/forget-password", [AuthController::class, "forget_password"]);
+Route::post("/check-forget-password", [AuthController::class, "check_forget_password_otp"]);
+Route::post("/reset-password", [AuthController::class, "reset_password"])->middleware("loggedIn");

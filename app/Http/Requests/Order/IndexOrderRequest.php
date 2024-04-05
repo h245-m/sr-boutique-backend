@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Rating;
+namespace App\Http\Requests\Order;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRatingRequest extends FormRequest
+class IndexOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +22,11 @@ class UpdateRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'command' => 'required|string|max:255',
-            'level' => 'required|integer|in:0,1,2',
-            'api_key' => 'required|string|max:255',
+            'query' => 'string',
+            'status' => 'string|in:Pending,Confirmed,Completed,Canceled,Rejected',
+            'sort_by' => 'string|in:id,name,city', // also take asc or desc
+            'asc' => 'boolean|required_with:sort_by',
+            'per_page' => 'integer|min:1|max:30',
         ];
     }
 }

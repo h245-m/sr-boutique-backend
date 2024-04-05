@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'parent_id' => $this->when(isset($this->parent_id), $this->parent_id),
-            'image' => $this->when($this->getFirstMediaUrl("main") != "", $this->getFirstMediaUrl("main")),
+            'image' => $this->when($this->getFirstMediaUrl("main") != "", MediaResource::make($this->getMedia("main")->first())),
             'children' => $this->when(($request->is('api/category') && $request->isMethod("GET") && !isset($this->parent_id)), function () { 
                 return $this->whenLoaded('children' , CategoryResource::collection($this->children));
             }),

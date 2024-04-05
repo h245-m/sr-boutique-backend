@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\API\V1\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\CheckOTPForgetPassowrdRequest;
 use App\Http\Requests\Auth\CheckOTPRequest;
+use App\Http\Requests\Auth\ForgetPassowrdRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Mail\ForgetPasswordMail;
 use App\Mail\RegisterMail;
 use App\Models\User;
 use DateTime;
@@ -38,7 +42,6 @@ class AuthController extends Controller
 
     }
 
-
     public function login(LoginUserRequest $request)
     {
         $fields = $request->validated();
@@ -65,7 +68,6 @@ class AuthController extends Controller
 
     }
 
-
     public function check_otp(CheckOTPRequest $request)
     {
         $data = $request->validated();
@@ -81,6 +83,63 @@ class AuthController extends Controller
             'email_verified_at' => now()
         ]);
 
+        return $this->respondNoContent();
+    }
+
+    public function forget_password(ForgetPassowrdRequest $request)
+    {
+        $fields = $request->validated();
+
+        $user = User::where('email', $fields['email'])->first();
+
+        if (! $user) {
+            return $this->respondError('User not found.');
+        }
+
+        $otp = rand(100000, 999999);
+
+        Mail::to($user->email)->send(new ForgetPasswordMail($otp));
+
+        $user->update([
+           'otp' => $otp
+        ]);
+        
+        return $this->respondNoContent();
+
+    }
+
+    public function check_forget_password_otp(CheckOTPForgetPassowrdRequest $request)
+    {
+        $fields = $request->validated();
+
+        $user = User::where('email', $fields['email'])->first();
+
+        if (! $user) {
+            return $this->respondError('User not found.');
+        }
+
+        if ($fields['otp'] != $user->otp) {
+           return $this->respondError('Wrong OTP');
+        }
+
+        $token = $user->createToken(env("SANCTUM_TOKEN") , ['*'] , new DateTime('+7 minutes'))->plainTextToken;
+        
+        return $this->respondOk([
+            "token" => $token
+        ] , 'Use this token to reset your password');
+
+    }
+
+    public function reset_password(ResetPasswordRequest $request)
+    {
+        $fields = $request->validated();
+
+        $user = $request->user;
+        $user->password = Hash::make($fields['password']);
+        $user->update();
+
+        $user->tokens()->delete();
+        
         return $this->respondNoContent();
     }
 
