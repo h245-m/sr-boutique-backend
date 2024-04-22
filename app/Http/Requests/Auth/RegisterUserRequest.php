@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Rules\MinMaxWordsRule;
 use App\Rules\PhoneValidation;
 use Illuminate\Foundation\Http\FormRequest;
+// use Propaganistas\LaravelPhone\Rules\Phone;
 
 class RegisterUserRequest extends FormRequest
 {
@@ -26,10 +27,11 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string' , 'between:1,255' , new MinMaxWordsRule(1, 3)],
+            'name' => ['required', 'string' , 'between:1,255'],
             'password' => 'required|string|confirmed|min:8|max:25',
             'email' => 'required|email|unique:users',
-            'phone' => ['required' , new PhoneValidation],
+            'phone' => ['required' , 'phone'],
+            'image' => 'image,mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }

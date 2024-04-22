@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\ForgetPassowrdRequest;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Resources\UserResource;
 use App\Mail\ForgetPasswordMail;
 use App\Mail\RegisterMail;
 use App\Models\User;
@@ -30,67 +31,76 @@ class AuthController extends Controller
 
         $user = User::create($data);
         
+
+        if ($request->hasFile('image')) {
+            $user->clearMediaCollection("main");
+            $user->addMediaFromRequest('image')->toMediaCollection("main");
+        }
+
         $user->assignRole('client');
 
-        Mail::to($user->email)->send(new RegisterMail($otp));
+        // Mail::to($user->email)->send(new RegisterMail($otp));
 
-        $expiresAt = new DateTime('+7 minutes');
+        // $expiresAt = new DateTime('+7 minutes');
 
-        $user->token = $user->createToken(env('SANCTUM_TOKEN'), ['*'], $expiresAt)->plainTextToken;
+        // $user->token = $user->createToken(env('SANCTUM_TOKEN'), ['*'], $expiresAt)->plainTextToken;
         
-        return $this->respondCreated($user, 'Registered successfully');
+        return $this->respondCreated(UserResource::make($user), 'Registered successfully');
 
     }
 
     public function login(LoginUserRequest $request)
     {
-        $fields = $request->validated();
+        $data = $request->validated();
 
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
-        if (! $user || ! Hash::check(request()->post('password'), $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             return $this->respondError('Bad credentials.');
         }
 
-        if (! $user->email_verified_at) {
-            return $this->respondError('Please verify your email first');
-        }
+        // if (! $user->email_verified_at) {
+        //     return $this->respondError('Please verify your email first');
+        // }
 
         $token = $user->createToken(env("SANCTUM_TOKEN"))->plainTextToken;
 
         $user->token = $token;
-        $user->role = $user->getRoleNames()[0];
-        unset($user->roles);
         
         return $this->respondOk([
-            "user" => $user
+            "user" => UserResource::make($user)
         ] , 'Login successfully');
 
     }
 
-    public function check_otp(CheckOTPRequest $request)
-    {
-        $data = $request->validated();
+    // public function check_otp(CheckOTPRequest $request)
+    // {
+    //     $data = $request->validated();
 
-        $user = $request->user;
+    //     $user = $request->user;
 
-        if ($data['otp'] != $user->otp) {
-           return $this->respondError('Wrong OTP');
-        }
+    //     if ($data['otp'] != $user->otp) {
+    //        return $this->respondError('Wrong OTP');
+    //     }
        
-        $user->update([
-            'otp' => null,
-            'email_verified_at' => now()
-        ]);
+    //     $user->update([
+    //         'otp' => null,
+    //         'email_verified_at' => now()
+    //     ]);
 
-        return $this->respondNoContent();
-    }
+    //     return $this->respondNoContent();
+    // }
 
     public function forget_password(ForgetPassowrdRequest $request)
     {
-        $fields = $request->validated();
 
-        $user = User::where('email', $fields['email'])->first();
+        $data = $request->validated();
+
+        if (isset($data['email'])){
+            $user = User::where('email', $data['email'])->first();
+        } else {
+            $user = User::where('phone', $data['phone'])->first();
+        }
 
         if (! $user) {
             return $this->respondError('User not found.');
@@ -110,15 +120,19 @@ class AuthController extends Controller
 
     public function check_forget_password_otp(CheckOTPForgetPassowrdRequest $request)
     {
-        $fields = $request->validated();
+        $data = $request->validated();
 
-        $user = User::where('email', $fields['email'])->first();
+        if (isset($data['email'])){
+            $user = User::where('email', $data['email'])->first();
+        } else {
+            $user = User::where('phone', $data['phone'])->first();
+        }
 
         if (! $user) {
             return $this->respondError('User not found.');
         }
 
-        if ($fields['otp'] != $user->otp) {
+        if ($data['otp'] != $user->otp) {
            return $this->respondError('Wrong OTP');
         }
 

@@ -4,17 +4,20 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\GenderType;
 use App\Enums\OAuthType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable , HasRoles;
+    use HasApiTokens, HasFactory, Notifiable , HasRoles , InteractsWithMedia ;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +31,9 @@ class User extends Authenticatable
         'phone',
         'otp',
         'email_verified_at',
+        'gender',
+        'nick',
+        'address',
     ];
 
     /**
@@ -51,6 +57,14 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected function gender(): Attribute
+        {
+            return Attribute::make(
+                get: fn ($value) => isset($value) ? GenderType::fromValue($value)->key : null,
+                set: fn ($value) => isset($value) ? GenderType::fromKey($value) : null,
+            );
+        }
+
     public function products()
     {
         return $this->hasMany(Product::class , 'user_id');
@@ -69,6 +83,10 @@ class User extends Authenticatable
     public function wish_list()
     {
         return $this->belongsToMany(Product::class , 'wish_list');
+    }
+
+    public function chat_rooms(){
+        return $this->hasMany(ChatRoom::class , 'user1_id')->orWhere('user2_id' , $this->id);
     }
 }
 

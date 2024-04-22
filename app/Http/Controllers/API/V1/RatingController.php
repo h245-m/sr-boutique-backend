@@ -33,7 +33,7 @@ class RatingController extends Controller
         if(!$prodcut){
             return $this->respondNotFound("Product not found");
         }
-
+        // return $request->user->id;
         $prodcut->rateOnce($data['rate'] , $data['comment'] ?? null , $request->user->id);
 
         return $this->respondNoContent();

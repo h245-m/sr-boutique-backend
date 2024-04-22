@@ -27,15 +27,19 @@ class ProductResource extends JsonResource
             'live' => $this->live,
             'category_id' => $this->category_id,
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
-            'colors' => $this->when($request->is('api/product/*') && $request->isMethod("GET"), function () { 
+            'colors' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
                 return $this->whenLoaded('colors' , AttributeResource::collection($this->colors));
             }),
-            'sizes' => $this->when($request->is('api/product/*') && $request->isMethod("GET"), function () { 
+            'sizes' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
                 return $this->whenLoaded('sizes' , AttributeResource::collection($this->sizes));
             }),
-            'ratings' => $this->when($request->is('api/product/*') && $request->isMethod("GET"), function () { 
+            'randomImages' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
+                return $this->whenLoaded('randomImages' , RatingUserResource::collection($this->randomImages));
+            }),
+            'ratings' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
                 return $this->whenLoaded('ratings' , RatingResource::collection($this->ratings))->response()->getData();
             }),
+            
         ];
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\IndexAdminProductRequest;
 use App\Http\Requests\Product\IndexProductRequest;
 use App\Models\Product;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
-use App\Http\Resources\ProductResource; 
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 
 class ProductController extends Controller
 {
@@ -30,6 +33,30 @@ class ProductController extends Controller
                     $query->orderByDesc($data['sort_by']);
                 }
             });
+
+        $products = $query->paginate($data['per_page'] ?? 15);
+
+        return $this->respondOk(ProductResource::collection($products)->response()->getData(), 'Products fetched successfully');
+    }
+
+    public function index_admin(IndexAdminProductRequest $request)
+    {
+        $data = $request->validated();
+
+        $query = Product::query();
+
+        $query->when(isset($data['query']), function ($query) use ($data) {
+            $query->where('name', 'like', '%' . $data['query'] . '%');
+        })
+        ->when(isset($data['sort_by']), function ($query) use ($data) {
+            if ($data['asc']) {
+                $query->orderBy($data['sort_by']);
+            } else {
+                $query->orderByDesc($data['sort_by']);
+            }
+        })->when(isset($data['live']), function ($query) use ($data) {
+            $query->isLive($data['live']);
+        });
 
         $products = $query->paginate($data['per_page'] ?? 15);
 
@@ -72,9 +99,13 @@ class ProductController extends Controller
             return $this->respondNotFound('Product not found.');
         }
 
-        // $product->setRelation('ratings',  $product-ww    >ratings()->select('id', 'rating', 'comment', 'rateable_id')->paginate());
+        $ratingsIds = $product->ratings()->select('id', 'user_id')->whereHas('user.media')->get()->pluck('user_id');
+        $usersHasImages = User::whereIn('id' , $ratingsIds)->select('id')->inRandomOrder()->limit(5)->get();
+        
         $product->setRelation('colors', $product->attributes()->where('type', 0)->get());
         $product->setRelation('sizes', $product->attributes()->where('type', 1)->get());
+        $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id' , 'user_id')->paginate());
+        $product->setRelation('randomImages', $usersHasImages);
 
         return $this->respondOk(ProductResource::make($product), 'Product fetched successfully');
     }

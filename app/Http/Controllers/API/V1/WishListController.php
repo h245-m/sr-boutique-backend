@@ -32,7 +32,6 @@ class WishListController extends Controller
                 }
             });
             
-
         $wishList_products = $query->paginate($data['per_page'] ?? 15);
 
         return $this->respondOk(WishListResource::collection($wishList_products)->response()->getData(), 'WishList fetched successfully');

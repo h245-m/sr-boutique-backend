@@ -23,7 +23,8 @@ class CheckOTPForgetPassowrdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required_without:phone', 'string', 'email' , 'exists:users,email'],
+            'phone' => ['required_without:email', 'string', 'phone' , 'exists:users,phone'],
             'otp' => ['required', 'string', 'digits:6'],
         ];
     }
