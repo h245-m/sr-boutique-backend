@@ -11,6 +11,7 @@ use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -93,9 +94,9 @@ class ProductController extends Controller
      * Display the specified resource.
      */
 
-    public function show(Product $product)
+    public function show(Product $product , Request $request)
     {
-        if (!$product->live) {
+        if (!$product->live && (!$request->hasRole('product_admin') && !$request->hasRole('super_admin')) ) {
             return $this->respondNotFound('Product not found.');
         }
 

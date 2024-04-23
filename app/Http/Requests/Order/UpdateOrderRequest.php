@@ -19,10 +19,20 @@ class UpdateOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
+     const Pending = 0;
+     const In_Progress = 1;
+     const Cancelled = 2;
+     const Delayed = 3;
+     const Shipped = 4;
+     const Out_For_Delivery = 5;
+     const Delivered = 6;
+     const Returned_To_Sender = 7;
+
     public function rules(): array
     {
         return [
-            'status' => 'required|in:Confirmed,Rejected,Completed',
+            'status' => 'required|in:In_Progress,Cancelled,Delayed,Shipped,Out_For_Delivery,Delivered,Returned_To_Sender',
         ];
     }
 }

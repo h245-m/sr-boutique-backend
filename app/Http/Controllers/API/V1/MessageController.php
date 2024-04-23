@@ -26,7 +26,7 @@ class MessageController extends Controller
         $data = $request->validated();
         $user = $request->user;
 
-        $chatRoom = $user->chat_rooms()->where('user1_id', $data['user_id'])->orWhere('user2_id', $data['user_id'])->first();
+        $chatRoom = ChatRoom::where([['user1_id', $data['user_id']] , ['user2_id' , $user->id]])->orWhere([['user1_id', $user->id] , ['user2_id' , $data['user_id']]])->first();
         
         if (!$chatRoom) {
             $chatRoom = ChatRoom::create([
@@ -37,7 +37,8 @@ class MessageController extends Controller
             broadcast(new \App\Events\ChatRoomCreated($chatRoom));
         }
 
-        $message = $chatRoom->messages->create($data);
+        $data['user_id'] = $user->id;
+        $message = $chatRoom->messages()->create($data);
 
         broadcast(new \App\Events\MessageSent($message, $chatRoom));
         return response()->json(['message' => $message], 200);

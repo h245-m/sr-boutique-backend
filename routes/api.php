@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('loggedIn')->group( function() {
 
-    Route::patch("/user/update", [UserController::class, "update"]);
+    Route::apiResource("user", UserController::class);
     Route::apiResource("message", MessageController::class);
 
     Route::middleware('client')->group( function() {

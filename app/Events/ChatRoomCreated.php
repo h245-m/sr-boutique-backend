@@ -38,4 +38,10 @@ class ChatRoomCreated implements ShouldBroadcast
     public function broadcastAs(){
         return 'chatRoomCreated';
     }
+
+    public function broadcastWith(){
+        return [
+            'chatRoom' => $this->chatRoom->only('id', 'user1_id', 'user2_id', 'created_at'),
+        ];
+    }
 }

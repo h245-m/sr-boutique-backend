@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexOrderRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,10 @@ class IndexOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'query' => 'string',
-            'status' => 'string|in:In_Progress,Cancelled,Delayed,Shipped,Out_For_Delivery,Delivered,Returned_To_Sender',
-            'sort_by' => 'string|in:id,name,city', // also take asc or desc
-            'asc' => 'boolean|required_with:sort_by',
-            'per_page' => 'integer|min:1|max:30',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed|string|min:8',
+            'phone' => 'phone',
         ];
     }
 }

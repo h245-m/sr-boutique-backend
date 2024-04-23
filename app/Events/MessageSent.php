@@ -41,4 +41,10 @@ class MessageSent implements ShouldBroadcast
     public function broadcastAs(){
         return 'chatMessage';
     }
+
+    public function broadcastWith(){
+        return [
+            'message' => $this->message->only('id', 'text', 'user_id' , 'chat_room_id', 'created_at'),
+        ];
+    }
 }

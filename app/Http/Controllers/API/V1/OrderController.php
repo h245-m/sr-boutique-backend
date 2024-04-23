@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Enums\OrderStatusType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\IndexOrderRequest;
 use App\Models\Order;
@@ -28,7 +29,7 @@ class OrderController extends Controller
         });
 
         $query->when(isset($data['status']) , function($query) use($data){
-            $query->where('status' , $data['status']);
+            $query->where('status' , OrderStatusType::fromKey($data['status'])->value);
         });
 
         $query->when(isset($data['sort_by']) , function($query) use($data){
@@ -63,7 +64,7 @@ class OrderController extends Controller
         });
 
         $query->when(isset($data['status']) , function($query) use($data){
-            $query->where('status' , $data['status']);
+            $query->where('status' , OrderStatusType::fromKey($data['status'])->value);
         });
 
         $query->when(isset($data['sort_by']) , function($query) use($data){
@@ -149,8 +150,14 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show(Order $order , Request $request)
     {
+        $user = $request->user;
+
+        if ($user->id != $order->user_id && !$user->hasRole('admin') && !$user->hasRole('super_admin')){
+            return $this->respondError("Unauthorized");
+        }
+
         return $this->respondOk($order->load('products') , 'Order fetched successfully');
     }
 
@@ -161,17 +168,17 @@ class OrderController extends Controller
     {
         $data = $request->validated();
 
-        if($order->status == "Completed" || $order->status == "Canceled"){
-            return $this->respondError("Cannot change status of an order that is Completed or Canceled " . "current status : " . $order->status);
-        }
+        // if($order->status == "Completed" || $order->status == "Canceled"){
+        //     return $this->respondError("Cannot change status of an order that is Completed or Canceled " . "current status : " . $order->status);
+        // }
 
-        if(($data['status'] == "Confirmed" || $data['status'] == "Rejected") && $order->status != "Pending"){ 
-            return $this->respondError("Cannot Confirme or Reject order that is not pending ". "current status : " . $order->status);
-        }
+        // if(($data['status'] == "Confirmed" || $data['status'] == "Rejected") && $order->status != "Pending"){ 
+        //     return $this->respondError("Cannot Confirme or Reject order that is not pending ". "current status : " . $order->status);
+        // }
 
-        if($data['status'] == "Completed" && $order->status != "Confirmed"){ 
-            return $this->respondError("Cannot Complete an order that is not confirmed ". "current status : " . $order->status);
-        }
+        // if($data['status'] == "Completed" && $order->status != "Confirmed"){ 
+        //     return $this->respondError("Cannot Complete an order that is not confirmed ". "current status : " . $order->status);
+        // }
 
         $order->update([
             'status' => $data['status'],
