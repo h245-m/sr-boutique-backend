@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Requests\Product;
+
 use Illuminate\Foundation\Http\FormRequest;
+use Validator;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -26,13 +28,19 @@ class UpdateProductRequest extends FormRequest
             'long_description' => 'string|max:6000',
             'quantity' => 'integer|min:1',
             'live' => 'boolean',
-            'price' => 'min:1|max:99998.99|numeric|decimal:0,2',
-            'type' => 'string|max:255',
+            'expires_at' => 'date|format:Y-m-d H:m:s i|after:now',
+            'price' => ['required_with:discount','max:999998.99' , 'numeric' , 'decimal:0,2'],
+            'discount' => ['required_with:price','max:999999.99' , 'numeric' , 'decimal:0,2'],
+            'sku' => 'string|max:255,unique:products,sku',
             'category_id' => 'integer|min:1|exists:categories,id',
             'image' => 'array|min:1|max:1',
             'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',
             'additional_images' => 'array|min:1|max:6',
-            'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048'
+            'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
+            'colors' => 'array|max:20',
+            'colors.*' => 'string|max:255|hex_color',
+            'sizes' => 'array|max:20|distinct',
+            'sizes.*' => 'string|max:255|in:S,L,XL,XXL,XXXL,XXXXL,XXXXXL',
         ];
     }
 }

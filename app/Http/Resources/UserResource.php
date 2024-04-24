@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'address' => $this->address,
             'nick' => $this->nick,
             'image' => $this->when($this->getFirstMediaUrl("main") != "", MediaResource::make($this->getMedia("main")->first())),
-            'role' => $this->getRoleNames()[0],
+            'roles' => $this->getRoleNames(),
             'token' => $this->when($this->token, $this->token)
         ];
     }

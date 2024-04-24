@@ -39,6 +39,11 @@ class OrderController extends Controller
                 $query->orderByDesc($data['sort_by']);
             }
         });
+        
+        $query->with(['products' => function ($query) {
+            $query->select('order_id', DB::raw('SUM(quantity * (price - priceAfter)) as total_discount'))
+                  ->groupBy('order_id');
+        }]);
 
         $orders = $query->paginate($per_page);
 
@@ -75,6 +80,19 @@ class OrderController extends Controller
             }
         });
 
+        $query->with(['products' => function ($query) {
+            $query->select(
+                'products.id',
+                'products.name',
+                'products.price',
+                'products.priceAfter',
+                'products.quantity',
+                'products.category_id',
+                DB::raw('SUM(products.price * order_product.quantity - order_product.price) as total_discount')
+            )->groupBy('products.id');
+        }]);
+
+        
         $orders = $query->paginate($per_page);
 
         return $this->respondOk($orders, 'Orders fetched successfully');
@@ -97,10 +115,14 @@ class OrderController extends Controller
         ->where('product_user.user_id', $user->id)
         ->select(
             'products.id',
+            'products.name',
             'products.price',
+            'products.priceAfter',
+            'products.category_id',
             'products.quantity as productQuantity',
             'product_user.quantity as cartQuantity',
-            DB::raw('(product_user.quantity * products.price) as total_price')
+            DB::raw('(product_user.quantity * (products.price - products.priceAfter)) as total_discount'),
+            DB::raw('(product_user.quantity * products.priceAfter) as total_price')
         )
         ->get();
 
@@ -108,16 +130,14 @@ class OrderController extends Controller
             return $this->respondError("Cart is empty");
         }
 
+        $totalPriceSum = round($result->sum('total_price'), 2);
+        
         $data['user_id'] = $user->id;
         $data['total'] = 0;
 
         $order = Order::create($data);
 
-        $totalSum = 0;
-
         foreach($result as $row) {
-
-            $totalSum += $row->total_price;
 
             if($row->cartQuantity > $row->productQuantity) {
                 DB::rollBack();
@@ -133,17 +153,15 @@ class OrderController extends Controller
 
         }
 
-        $totalSum = round($totalSum , 2);
-
         // Clear the cart after successful checkout
-        $user->cart()->detach();
+        // $user->cart()->detach();
         
-        $order->update(['total' => $totalSum]);
+        $order->update(['total' => $totalPriceSum]);
         
 
         DB::commit();
 
-        return $this->respondOk($totalSum , "Checkout successful");
+        return $this->respondOk($totalPriceSum , "Checkout successful");
 
     }
 

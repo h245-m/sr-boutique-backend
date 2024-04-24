@@ -57,18 +57,22 @@ class CartController extends Controller
             'products.id',
             'products.name',
             'products.price',
+            'products.priceAfter',
             'products.category_id',
             'products.quantity as productQuantity',
             'product_user.quantity as cartQuantity',
-            DB::raw('(product_user.quantity * products.price) as total_price')
+            DB::raw('(product_user.quantity * (products.price - products.priceAfter)) as total_discount'),
+            DB::raw('(product_user.quantity * products.priceAfter) as total_price')
         )
         ->get();
-
-        $totalSum = round($result->sum('total_price') , 2);
-
+    
+        $totalPriceSum = round($result->sum('total_price'), 2);
+        $totalDiscountSum = round($result->sum('total_discount'), 2);
+        
         return $this->respondOk([
             'cartItems' => $result,
-            'total_price' => $totalSum
+            'total_price' => $totalPriceSum,
+            'total_discount' => $totalDiscountSum
         ]);
 
     }

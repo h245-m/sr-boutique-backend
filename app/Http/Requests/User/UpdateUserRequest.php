@@ -27,6 +27,8 @@ class UpdateUserRequest extends FormRequest
             'gender' => ['string' , 'in:Male,Female'],
             'address' => ['string' , 'between:1,255'],
             'image' => 'image|mimes:jpeg,jpg,png|max:2048',
+            'roles' => 'array',
+            'roles.*' => 'string|distinct|in:over_view,category,product,order,stock,message,shipping,admin,setting',
         ];
     }
 }

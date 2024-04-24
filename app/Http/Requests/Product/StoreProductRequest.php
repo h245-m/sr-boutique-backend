@@ -28,12 +28,18 @@ class StoreProductRequest extends FormRequest
             'quantity' => 'required|integer|min:1',
             'live' => 'required|boolean',
             'price' => 'required|min:1|max:99998.99|numeric|decimal:0,2',
-            'type' => 'required|string|max:255',
+            'discount' => 'required|max:99999.99|numeric|decimal:0,2|lt:price',
+            'expires_at' => 'date|format:Y-m-d H:m:s i|after:now',
+            'sku' => 'required|string|max:255|unique:products',
             'category_id' => 'required|integer|min:1|exists:categories,id',
             'image' => 'array|max:1',
             'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',
             'additional_images' => 'array|max:20',
-            'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048'
+            'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
+            'colors' => 'required|array|max:20',
+            'colors.*' => 'string|max:255|distinct|hex_color',
+            'sizes' => 'required|array|distinct',
+            'sizes.*' => 'string|max:255|distinct|in:S,L,XL,XXL,XXXL,XXXXL,XXXXXL',
         ];
     }
 }

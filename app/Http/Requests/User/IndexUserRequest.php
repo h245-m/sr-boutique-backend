@@ -23,7 +23,7 @@ class IndexUserRequest extends FormRequest
     {
         return [
             'query' => 'string|max:255',
-            'role' => 'required|string|in:admin,client',
+            'role' => 'required|string|in:All_Admins,client,over_view,category,product,order,stock,message,shipping,admin,setting',
             'per_page' => 'integer|min:1|max:30',
         ];
     }

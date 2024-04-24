@@ -9,7 +9,6 @@ use App\Models\Product;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -26,14 +25,15 @@ class ProductController extends Controller
 
         $query->when(isset($data['query']), function ($query) use ($data) {
             $query->where('name', 'like', '%' . $data['query'] . '%');
-        })
-            ->when(isset($data['sort_by']), function ($query) use ($data) {
-                if ($data['asc']) {
-                    $query->orderBy($data['sort_by']);
-                } else {
-                    $query->orderByDesc($data['sort_by']);
-                }
-            });
+        })->when(isset($data['discount']), function ($query) {
+            $query->whereRaw('priceAfter = price');
+        })->when(isset($data['sort_by']), function ($query) use ($data) {
+            if ($data['asc']) {
+                $query->orderBy($data['sort_by']);
+            } else {
+                $query->orderByDesc($data['sort_by']);
+            }
+        });
 
         $products = $query->paginate($data['per_page'] ?? 15);
 
@@ -55,8 +55,12 @@ class ProductController extends Controller
             } else {
                 $query->orderByDesc($data['sort_by']);
             }
+        })->when(isset($data['discount']), function ($query) {
+            $query->whereRaw('priceAfter = price');
         })->when(isset($data['live']), function ($query) use ($data) {
             $query->isLive($data['live']);
+        })->when(isset($data['expired']), function ($query) use ($data) {
+            $query->isExpired($data['expired']);
         });
 
         $products = $query->paginate($data['per_page'] ?? 15);
@@ -71,7 +75,8 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $data = $request->validated();
+        $data = $request->validated(); 
+        $data['priceAfter'] = $data['price'] - $data['discount'];
 
         $product = Product::create($data);
 
@@ -96,15 +101,12 @@ class ProductController extends Controller
 
     public function show(Product $product , Request $request)
     {
-        if (!$product->live && (!$request->hasRole('product_admin') && !$request->hasRole('super_admin')) ) {
+        if (!$product->live || ($product->expires_at && $product->expires_at < now()) && (!$request->hasRole('product_admin') && !$request->hasRole('super_admin')) ) {
             return $this->respondNotFound('Product not found.');
         }
 
         $ratingsIds = $product->ratings()->select('id', 'user_id')->whereHas('user.media')->get()->pluck('user_id');
         $usersHasImages = User::whereIn('id' , $ratingsIds)->select('id')->inRandomOrder()->limit(5)->get();
-        
-        $product->setRelation('colors', $product->attributes()->where('type', 0)->get());
-        $product->setRelation('sizes', $product->attributes()->where('type', 1)->get());
         $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id' , 'user_id')->paginate());
         $product->setRelation('randomImages', $usersHasImages);
 
@@ -118,6 +120,10 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
+        if (isset($data['discount'])){
+            $data['priceAfter'] = $data['price'] - $data['discount'];
+        }
+        
         if ($request->hasFile('image')) {
 
             if ($request->hasFile('image')) {

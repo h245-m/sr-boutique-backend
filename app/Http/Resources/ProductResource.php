@@ -18,21 +18,17 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'price' => $this->price,
+            'priceAfter' => $this->priceAfter,
             'quantity' => $this->quantity,
             'image' => $this->when($this->getFirstMediaUrl("main") != "", MediaResource::make($this->getMedia("main")->first())),
             'short_description' => $this->short_description,
             'long_description' => $this->long_description,
             'rate' => $this->averageRating(),
-            'type' => $this->type,
             'live' => $this->live,
             'category_id' => $this->category_id,
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
-            'colors' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
-                return $this->whenLoaded('colors' , AttributeResource::collection($this->colors));
-            }),
-            'sizes' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
-                return $this->whenLoaded('sizes' , AttributeResource::collection($this->sizes));
-            }),
+            'sizes' => $this->when($this->sizes , $this->sizes),
+            'colors' => $this->when($this->colors , $this->colors),
             'randomImages' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
                 return $this->whenLoaded('randomImages' , RatingUserResource::collection($this->randomImages));
             }),

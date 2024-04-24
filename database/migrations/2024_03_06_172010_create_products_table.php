@@ -19,8 +19,12 @@ return new class extends Migration
             $table->longText('long_description');
             $table->integer('quantity');
             $table->boolean('live');
-            $table->decimal('price', 7,2);
-            $table->string("type");
+            $table->dateTime('expires_at')->nullable();
+            $table->decimal('price', 15,2);
+            $table->decimal('priceAfter', 15,2)->nullable();
+            $table->string("sku")->unique();
+            $table->json("colors");
+            $table->json("sizes");
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
         });
     }

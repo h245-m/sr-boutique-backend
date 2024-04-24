@@ -17,8 +17,15 @@ class UserController extends Controller
     public function index(IndexUserRequest $request)
     {
         $data = $request->validated();
-        $query = User::query()->role($data['role']);
+        $query = User::query();
 
+        $query->when(isset($data['role']) , function($query) use($data){
+            if ($data['role'] == 'All_Admins') {
+                $query->hasRole(['over_view' , 'category' , 'product' , 'order' , 'stock' , 'message' , 'shipping' , 'admin' , 'setting' , 'client']);
+            }else {
+                $query->hasRole($data['role']);
+            }
+        });
         $query->when(isset($data['query']) , function($query) use($data){
             $query->where('name' , 'like' , '%' . $data['query'] . '%')->orWhere('email' , 'like' , '%' . $data['query'] . '%');
         });
@@ -35,8 +42,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $user = User::create($data);
-        $user->assignRole('admin');
-        // return $user;
+        $user->assignRole($data['roles']);
         return $this->respondCreated(new UserResource($user) , 'User created successfully');
     }
 
@@ -48,10 +54,33 @@ class UserController extends Controller
         //
     }
 
+    public function update(UpdateUserRequest $request , User $user)
+    {
+        $data = $request->validated();
+
+        if ($user->hasRole('super_admin')){
+            return $this->respondError('You can not update super admin');
+        }
+
+        $user->update($data);
+
+        if(isset($data['roles'])) {
+            $user->syncRoles($data['roles']);
+        }
+
+        if ($request->hasFile('image')) {
+            $user->clearMediaCollection("main");
+            $user->addMediaFromRequest('image')->toMediaCollection("main");
+        }
+
+        return $this->respondOk(UserResource::make($user));
+
+    }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request)
+    public function update_profile(UpdateUserRequest $request)
     {
         $data = $request->validated();
         $user = $request->user;
@@ -72,6 +101,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        if ($user->hasRole('super_admin')){
+            return $this->respondError('You can not delete super admin');
+        }
+
+        $user->delete();
+        return $this->respondOk('User deleted successfully');
     }
 }

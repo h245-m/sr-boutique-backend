@@ -43,13 +43,9 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => 'Order not found.'
                 ], 404);
-            } else if ($request->is('api/homeGroup/*')) {
+            } else if ($request->is('api/user/*')) {
                 return response()->json([
-                    'message' => 'Home Group not found.'
-                ], 404);
-            } else if ($request->is('api/homeCard/*')) {
-                return response()->json([
-                    'message' => 'Home Card not found.'
+                    'message' => 'User not found.'
                 ], 404);
             }
         });

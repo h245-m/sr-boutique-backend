@@ -12,12 +12,12 @@ class Product extends Model implements HasMedia
 {
     use HasFactory , CustomRateable , InteractsWithMedia;
 
-    public $fillable = ['name', 'long_description', 'short_description', 'price', 'type', 'category_id' , 'live' , 'quantity'];
+    public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'colors' , 'sizes'];
     
-    // public $casts = [
-    //     "category_id" => "integer",
-    //     "price" => "float",
-    // ];
+    protected $casts = [
+        'colors' => 'json',
+        'sizes' => 'json',
+    ];
 
     public function category()
     {
@@ -49,5 +49,13 @@ class Product extends Model implements HasMedia
         return $query->where('live', $live);
     }
     
+    public function scopeIsExpired($query , bool $expires)
+    {
+        if($expires){
+            return $query->where('expires_at', '<', now());
+        } else {
+            return $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+        }
+    }
 
 }

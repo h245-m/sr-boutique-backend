@@ -17,7 +17,16 @@ class UserSeeder extends Seeder
 
 
         $superAdmin = Role::create(['name' => 'super_admin']);
+        $adminRole = Role::create(['name' => 'over_view']);
+        $adminRole = Role::create(['name' => 'category']);
+        $adminRole = Role::create(['name' => 'product']);
+        $adminRole = Role::create(['name' => 'order']);
+        $adminRole = Role::create(['name' => 'stock']);
+        $adminRole = Role::create(['name' => 'message']);
+        $adminRole = Role::create(['name' => 'shipping']);
         $adminRole = Role::create(['name' => 'admin']);
+        $adminRole = Role::create(['name' => 'setting']);
+
         $clientRole = Role::create(['name' => 'client']);
 
         $admin = User::create([
@@ -39,14 +48,14 @@ class UserSeeder extends Seeder
         $admin->assignRole($superAdmin);
         $client->assignRole($superAdmin);
 
-        $users = User::factory(100)->create();
-        $users->each(function (User $user) use($adminRole){
-            $user->assignRole($adminRole);
-        });
+        // $users = User::factory(100)->create();
+        // $users->each(function (User $user) use($adminRole){
+        //     $user->assignRole($adminRole);
+        // });
 
-        $users = User::factory(100)->create();
-        $users->each(function (User $user) use($clientRole){
-            $user->assignRole($clientRole);
-        });
+        // $users = User::factory(100)->create();
+        // $users->each(function (User $user) use($clientRole){
+        //     $user->assignRole($clientRole);
+        // });
     }
 }

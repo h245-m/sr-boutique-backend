@@ -26,9 +26,11 @@ class IndexAdminProductRequest extends FormRequest
         return [
             'query' => 'string',
             'live' => 'boolean',
+            'discount' => 'boolean',
             'sort_by' => 'string|in:id,name,price',
             'asc' => 'boolean|required_with:sort_by',
             'per_page' => 'integer|min:1|max:30',
+            'expired' => 'boolean',
         ];
     }
 }
