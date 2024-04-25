@@ -21,14 +21,16 @@ class ProductFactory extends Factory
 
         return [
             'name' => $this->faker->name,
-            "image" => $this->faker->image,
-            "description" => $this->faker->paragraph,
+            "short_description" => $this->faker->paragraph,
+            "long_description" => $this->faker->paragraph,
             "quantity" => $this->faker->numberBetween(1 , 1000),
             "live" => true,
             "price" => $this->faker->randomFloat(2 , 1 , 5000),
             "priceAfter" => $this->faker->randomFloat(2 , 1 , 5000),
             "category_id" => $this->faker->randomElement($categories_ids),
-            "user_id" => 1
+            "sku" => $this->faker->ean8,
+            "colors" => [$this->faker->hexColor, $this->faker->hexColor],
+            "sizes" => ["S", "M", "L", "XL", "XXL", "XXXL"],
         ];
     }
 }

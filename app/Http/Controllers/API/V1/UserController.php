@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index(IndexUserRequest $request)
     {
         $data = $request->validated();
-        $query = User::query();
+        $query = User::query()->withoutRole('super_admin');
 
         $query->when(isset($data['role']) , function($query) use($data){
             if ($data['role'] == 'All_Admins') {

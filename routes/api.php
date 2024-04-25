@@ -50,47 +50,47 @@ Route::middleware('loggedIn')->group( function() {
         Route::apiResource("user", UserController::class);
     });
     
-    Route::middleware('hasAnyRole:client,super_admin')->group( function() {
-        // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:client,super_admin')->group( function() {
+    //     // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
 
-    Route::middleware('hasAnyRole:over_view,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:over_view,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
     
-    Route::middleware('hasAnyRole:category,super_admin')->group( function() {
-        Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
-        Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
-    });
+    // Route::middleware('hasAnyRole:category,super_admin')->group( function() {
+    //     Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
+    //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
+    // });
 
-    Route::middleware('hasAnyRole:product,super_admin')->group( function() {
-        Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
-        Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
-    });
+    // Route::middleware('hasAnyRole:product,super_admin')->group( function() {
+    //     Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
+    //     Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
+    // });
 
-    Route::middleware('hasAnyRole:order,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:order,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
 
-    Route::middleware('hasAnyRole:stock,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:stock,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
 
-    Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
-        Route::apiResource("user", UserController::class);
-    });
+    // Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
+    //     Route::apiResource("user", UserController::class);
+    // });
 
-    Route::middleware('hasAnyRole:message,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:message,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
 
-    Route::middleware('hasAnyRole:shipping,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:shipping,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
 
-    Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
-        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    });
+    // Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
+    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    // });
     
 
 });
