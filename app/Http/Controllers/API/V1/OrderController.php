@@ -8,6 +8,7 @@ use App\Http\Requests\Order\IndexOrderRequest;
 use App\Models\Order;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Models\Shipping;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -133,37 +134,95 @@ class OrderController extends Controller
         }
 
         $totalPriceSum = round($result->sum('total_price'), 2);
-        
+
+        $priceOfCity = Shipping::where('type', 'City')->where('value', $data['city'])->first()->price;
+
+        $perOrder = Shipping::where('type', 'Equal')->where('value', '<' ,$totalPriceSum)->orderBy('value', 'desc')->first();
+        if ($perOrder) {
+            $pricePerOrder = $perOrder->price;
+        }
+
         $data['user_id'] = $user->id;
-        $data['total'] = 0;
+        $data['total'] = $totalPriceSum;
 
         $order = Order::create($data);
 
-        foreach($result as $row) {
 
-            if($row->cartQuantity > $row->productQuantity) {
-                DB::rollBack();
-                return $this->respondError("Insufficient quantity, existing quantity is ".$row->productQuantity);
+        if(count($result) == 1) {
+            foreach($result as $row) {
+
+                $perProduct = Shipping::where('type', 'Product')->where('value', $row->id)->first();
+                if ($perProduct) {
+                    $pricePerProduct = $perProduct->price;
+                }
+
+                $perCategory = Shipping::where('type', 'Category')->where('value', $row->category_id)->first();
+                if ($perCategory) {
+                    $pricePerCategory = $perCategory->price;
+                }
+                
+                if($row->cartQuantity > $row->productQuantity) {
+                    DB::rollBack();
+                    return $this->respondError("Insufficient quantity, existing quantity is ".$row->productQuantity);
+                }
+    
+                DB::table('products')->where('id', $row->id)->update(['quantity' => $row->productQuantity - $row->cartQuantity]);
+    
+                $order->products()->attach($row->id , [
+                    'quantity' => $row->cartQuantity,
+                    'price' => $row->total_price
+                ]);
+        
+                $shipping = min($pricePerOrder ?? PHP_INT_MAX, $pricePerProduct ?? PHP_INT_MAX , $pricePerCategory ?? PHP_INT_MAX , $priceOfCity);
+
+                $order->update([
+                    'shipping' => $shipping,
+                ]);
+
+                // Clear the cart after successful checkout
+                // $user->cart()->detach();
+
+                DB::commit();
+
+                return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'total' => $totalPriceSum + $shipping] , "Checkout successful");
+    
             }
+        } else {
 
-            DB::table('products')->where('id', $row->id)->update(['quantity' => $row->productQuantity - $row->cartQuantity]);
+            foreach($result as $row) {
 
-            $order->products()->attach($row->id , [
-                'quantity' => $row->cartQuantity,
-                'price' => $row->total_price
+                if($row->cartQuantity > $row->productQuantity) {
+                    DB::rollBack();
+                    return $this->respondError("Insufficient quantity, existing quantity is ".$row->productQuantity);
+                }
+    
+                DB::table('products')->where('id', $row->id)->update(['quantity' => $row->productQuantity - $row->cartQuantity]);
+    
+                $order->products()->attach($row->id , [
+                    'quantity' => $row->cartQuantity,
+                    'price' => $row->total_price
+                ]);
+    
+            }
+    
+            // Clear the cart after successful checkout
+            // $user->cart()->detach();
+                    
+    
+            DB::commit();
+    
+            $shipping = min($pricePerOrder ?? PHP_INT_MAX , $priceOfCity);
+    
+            $order->update([
+                'shipping' => $shipping,
             ]);
+    
+            return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'total' => $totalPriceSum + $shipping ] , "Checkout successful");
 
         }
-
-        // Clear the cart after successful checkout
-        // $user->cart()->detach();
-        
-        $order->update(['total' => $totalPriceSum]);
         
 
-        DB::commit();
-
-        return $this->respondOk($totalPriceSum , "Checkout successful");
+      
 
     }
 
@@ -174,7 +233,7 @@ class OrderController extends Controller
     {
         $user = $request->user;
 
-        if ($user->id != $order->user_id && !$user->hasRole('admin') && !$user->hasRole('super_admin')){
+        if ($user->id != $order->user_id && !$user->hasRole('order') && !$user->hasRole('super_admin')){
             return $this->respondError("Unauthorized");
         }
 
@@ -207,4 +266,25 @@ class OrderController extends Controller
         return $this->respondNoContent();
         
     }
+
+    public function destroy(Order $order , Request $request)
+    {
+        $user = $request->user;
+        
+        if ($user->id != $order->user_id){
+            return $this->respondError("Unauthorized");
+        }        
+
+        if($order->status != "Pending"){
+            return $this->respondError("Cannot Cancel an order that is not pending ". "current status : " . $order->status);
+        }
+        
+        $order->update([
+            'status' => 'Cancelled',
+        ]);
+
+        return $this->respondNoContent();
+        
+    }
+
 }

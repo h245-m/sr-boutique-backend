@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\V1\AttributeController;
 use App\Http\Controllers\API\V1\CartController;
 use App\Http\Controllers\API\V1\CategoryController;
 use App\Http\Controllers\API\V1\MessageController;
@@ -9,6 +8,8 @@ use App\Http\Controllers\API\V1\ProductController;
 use App\Http\Controllers\API\V1\RatingController;
 use App\Http\Controllers\API\V1\WishListController;
 use App\Http\Controllers\API\V1\UserController;
+use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,63 +39,61 @@ Route::middleware('loggedIn')->group( function() {
         Route::get("/cart/add-to-cart", [CartController::class, "store"]);
         Route::delete("/cart/remove-from-cart", [CartController::class, "destroy"]);
         Route::post("/order/my_order", [OrderController::class, "my_order"]);
-        Route::apiResource("order", OrderController::class , ['only' => ['store']]);
+        Route::apiResource("order", OrderController::class , ['only' => ['store' , 'destroy']]);
     });
     
-    Route::middleware('super_admin')->group( function() {
-        Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
-        Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
+    // Route::middleware('super_admin')->group( function() {
+    //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
+    //     Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
+    //     Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
+    //     Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
+    //     Route::apiResource("order", OrderController::class , ['only' => ['update', 'index']]);
+    //     Route::apiResource("user", UserController::class);
+    //     Route::apiResource("shipping", ShippingController::class);
+    // });
+    
+    Route::middleware('hasAnyRole:client,order,super_admin')->group( function() {
+        Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    });
+
+    Route::middleware('hasAnyRole:over_view,super_admin')->group( function() {
+        Route::get("stats", [StatsController::class , 'index']);
+    });
+    
+    Route::middleware('hasAnyRole:category,super_admin')->group( function() {
         Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
+        Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
+    });
+
+    Route::middleware('hasAnyRole:order,super_admin')->group( function() {
+        Route::apiResource("order", OrderController::class , ['only' => ['index' , 'update']]);
+    });
+
+    Route::middleware('hasAnyRole:product,stock,super_admin')->group( function() {
         Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
-        Route::apiResource("order", OrderController::class , ['only' => ['update', 'index']]);
+        Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
+    });
+
+    Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
         Route::apiResource("user", UserController::class);
     });
-    
-    // Route::middleware('hasAnyRole:client,super_admin')->group( function() {
-    //     // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
 
-    // Route::middleware('hasAnyRole:over_view,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
-    
-    // Route::middleware('hasAnyRole:category,super_admin')->group( function() {
-    //     Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
-    //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
-    // });
+    Route::middleware('hasAnyRole:message,super_admin')->group( function() {
+        // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    });
 
-    // Route::middleware('hasAnyRole:product,super_admin')->group( function() {
-    //     Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
-    //     Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
-    // });
+    Route::middleware('hasAnyRole:shipping,super_admin')->group( function() {
+        Route::apiResource("shipping", ShippingController::class , ['only' => [ 'store' , 'update', 'destroy']]);
+    });
 
-    // Route::middleware('hasAnyRole:order,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
-
-    // Route::middleware('hasAnyRole:stock,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
-
-    // Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
-    //     Route::apiResource("user", UserController::class);
-    // });
-
-    // Route::middleware('hasAnyRole:message,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
-
-    // Route::middleware('hasAnyRole:shipping,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
-
-    // Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
-    //     Route::apiResource("order", OrderController::class , ['only' => ['show']]);
-    // });
+    Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
+        // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    });
     
 
 });
 
+Route::apiResource("shipping", ShippingController::class , ['only' => [ 'index']]);
 Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
 Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
 Route::apiResource("rating", RatingController::class , ['only' => ['index']]);

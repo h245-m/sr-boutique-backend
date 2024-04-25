@@ -18,19 +18,19 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $query = User::query()->withoutRole('super_admin');
-
+        
         $query->when(isset($data['role']) , function($query) use($data){
             if ($data['role'] == 'All_Admins') {
-                $query->hasRole(['over_view' , 'category' , 'product' , 'order' , 'stock' , 'message' , 'shipping' , 'admin' , 'setting' , 'client']);
-            }else {
-                $query->hasRole($data['role']);
+                $query->role(['over_view' , 'category' , 'product' , 'order' , 'stock' , 'message' , 'shipping' , 'admin' , 'setting']);
+            }else {  
+                $query->role($data['role']);
             }
         });
         $query->when(isset($data['query']) , function($query) use($data){
-            $query->where('name' , 'like' , '%' . $data['query'] . '%')->orWhere('email' , 'like' , '%' . $data['query'] . '%');
+            $query->where(fn ($query) => $query->where('name' , 'like' , '%' . $data['query'] . '%')->orWhere('email' , 'like' , '%' . $data['query'] . '%'));
         });
 
-        $users = $query->paginate($data['per_page'] ?? 15);
+        $users = $query->get();
 
         return $this->respondOk(UserResource::collection($users), 'Users fetched successfully');
     }

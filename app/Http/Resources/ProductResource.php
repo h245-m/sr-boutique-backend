@@ -25,6 +25,7 @@ class ProductResource extends JsonResource
             'long_description' => $this->long_description,
             'rate' => $this->averageRating(),
             'live' => $this->live,
+            'sku' => $this->sku,
             'category_id' => $this->category_id,
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
             'sizes' => $this->when($this->sizes , $this->sizes),

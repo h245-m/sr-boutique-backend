@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Order;
 
 use App\Rules\PhoneValidation;
+use App\Rules\ValidCityShipping;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreOrderRequest extends FormRequest
@@ -22,13 +23,14 @@ class StoreOrderRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'email' => 'required|email',
             'phone' => ['required' , new PhoneValidation],
             'address' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'city' => ['required','string','max:255' , new ValidCityShipping()],
             'postal_code' => 'required|string|max:255',
         ];
     }

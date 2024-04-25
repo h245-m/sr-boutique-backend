@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\Shipping;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOrderRequest extends FormRequest
+class IndexShippingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,11 +19,11 @@ class UpdateOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    
     public function rules(): array
     {
         return [
-            'status' => 'required|in:In_Progress,Delayed,Shipped,Out_For_Delivery,Delivered,Returned_To_Sender',
+            'type' => 'string|in:Category,Equal,Product,City',
+            'per_page' => 'integer|min:1|max:30',
         ];
     }
 }
