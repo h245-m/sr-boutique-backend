@@ -40,7 +40,7 @@ class UpdateProductRequest extends FormRequest
             'colors' => 'array|max:20',
             'colors.*' => 'string|max:255|hex_color',
             'sizes' => 'array|max:20|distinct',
-            'sizes.*' => 'string|max:255|in:S,L,XL,XXL,XXXL,XXXXL,XXXXXL',
+            'sizes.*' => 'string|max:255|in:S,M,L,XL,XXL,XXXL,XXXXL,XXXXXL,XXXXXXL,XXXXXXXL',
         ];
     }
 }
