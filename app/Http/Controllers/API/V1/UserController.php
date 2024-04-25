@@ -30,7 +30,7 @@ class UserController extends Controller
             $query->where(fn ($query) => $query->where('name' , 'like' , '%' . $data['query'] . '%')->orWhere('email' , 'like' , '%' . $data['query'] . '%'));
         });
 
-        $users = $query->get();
+        $users = $query->paginate($data['per_page'] ?? 15);
 
         return $this->respondOk(UserResource::collection($users), 'Users fetched successfully');
     }
