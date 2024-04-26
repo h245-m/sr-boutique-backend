@@ -20,17 +20,15 @@
         </div>
     </div>
 
-    <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
-    <script src="js/app.js"></script>
 
-    <script>
-        const channel = window.Echo.channel('chat');
+    <!-- <script>
+        const channel = window.Echo.channel('chat.2');
 
         channel.listen('chatMessage', (e) => {
             console.log(e);
         });
 
-    </script>
+    </script> -->
 
 
 </div>

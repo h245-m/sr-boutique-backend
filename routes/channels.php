@@ -3,6 +3,8 @@
 use App\Models\ChatRoom;
 use Illuminate\Support\Facades\Broadcast;
 
+use function PHPUnit\Framework\isNull;
+
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -19,9 +21,15 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('chat.{chatRoom}', function ($user, ChatRoom $chatRoom) {
-    return true;
-    if ($user->id == $chatRoom->user1_id || $user->id == $chatRoom->user2_id) {
-        
+
+    if ($user->role("super_admin")){
+        return true;
+    }else {
+        return $user->id == $chatRoom->user1_id || $user->id == $chatRoom->user2_id;
     }
-    return false;
+    
+});
+
+Broadcast::channel('test', function ($user) {
+    return !is_null($user);
 });

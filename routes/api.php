@@ -24,6 +24,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Auth Routes are in auth.php
+Route::get("test" , function() {
+   broadcast(new \App\Events\TestEvent()); 
+   return response()->json(['message' => 'success'], 200);
+});
 
 Route::middleware('loggedIn')->group( function() {
 

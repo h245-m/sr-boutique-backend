@@ -12,9 +12,27 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-    <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <!-- <script>
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: import.meta.env.VITE_PUSHER_APP_KEY,
+            cluster: ,
+            wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
+            wsPort:  80,
+            wssPort:  443,
+            forceTLS: true,
+            enabledTransports: ['ws', 'wss'],
+        });
+
+        const channel = window.Echo.channel('chat.2');
+
+        channel.listen('chatMessage', (e) => {
+            console.log(e);
+        });
+
+    </script> -->
+    <!-- Scripts -->
 </head>
 <body>
     <div id="app">

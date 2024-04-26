@@ -34,7 +34,7 @@ class MessageController extends Controller
                 'user2_id' => $data['user_id'],
             ]);
 
-            broadcast(new \App\Events\ChatRoomCreated($chatRoom));
+            // broadcast(new \App\Events\ChatRoomCreated($chatRoom));
         }
 
         $data['user_id'] = $user->id;
