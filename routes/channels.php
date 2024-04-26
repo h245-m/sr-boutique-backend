@@ -20,14 +20,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('chat.{chatRoom}', function ($user, ChatRoom $chatRoom) {
+Broadcast::channel('chat.{id}', function ($user, $id) {
 
-    if ($user->role("super_admin")){
-        return true;
-    }else {
-        return $user->id == $chatRoom->user1_id || $user->id == $chatRoom->user2_id;
-    }
-    
+    return (int) $user->id == (int) $id;
+
 });
 
 Broadcast::channel('test', function ($user) {

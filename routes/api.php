@@ -10,6 +10,8 @@ use App\Http\Controllers\API\V1\WishListController;
 use App\Http\Controllers\API\V1\UserController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\StatsController;
+use App\Http\Requests\StoreMessageRequest;
+use App\Models\Message;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,16 +26,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Auth Routes are in auth.php
-Route::get("test" , function() {
-   broadcast(new \App\Events\TestEvent()); 
-   return response()->json(['message' => 'success'], 200);
+Route::get("test" , function(StoreMessageRequest $request) {
+    $data = $request->validated();
+    $user = $request->user;
+
+    $data['receiver_id'] = $data['user_id'];
+    $data['sender_id'] = $user->id;
+    $message = Message::create($data);
+
+    broadcast(new \App\Events\MessageSent($message));
+    return response()->json(['message' => $message], 200);
 });
+
 
 Route::middleware('loggedIn')->group( function() {
 
     Route::post("user/update_profile", [UserController::class , 'update_profile']);
 
-    Route::apiResource("message", MessageController::class);
 
     Route::middleware('client')->group( function() {
         Route::apiResource("rating", RatingController::class , ['only' => ['store' , 'destroy']]);
@@ -44,7 +53,11 @@ Route::middleware('loggedIn')->group( function() {
         Route::delete("/cart/remove-from-cart", [CartController::class, "destroy"]);
         Route::post("/order/my_order", [OrderController::class, "my_order"]);
         Route::apiResource("order", OrderController::class , ['only' => ['store' , 'destroy']]);
+        Route::get("/message/send_as_client", [MessageController::class, "send_as_client"]);
     });
+
+    Route::apiResource("message", MessageController::class);
+
     
     // Route::middleware('super_admin')->group( function() {
     //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);

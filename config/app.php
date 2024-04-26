@@ -60,6 +60,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'api_key' => "7pseW93rFSAYHXWulmQwMBUFwvCXDDMP",
+
     'asset_url' => env('ASSET_URL'),
 
     /*

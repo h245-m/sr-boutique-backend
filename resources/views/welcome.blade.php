@@ -16,9 +16,9 @@
       }
     });
 
-    var channel = pusher.subscribe('private-test');
-    channel.bind('test', function(data) {
-      alert("Gamed");
+    var channel = pusher.subscribe('private-chat.{{ Auth::user()->id }}' );
+    channel.bind('chatMessage', function(data) {
+      console.log(JSON.stringify(data));
     });
 
     // window.onload=function(){

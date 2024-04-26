@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Category;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ShowSubCategoryRequest extends FormRequest
+class SendMessageAsClientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ShowSubCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|exists:categories,id',
+            'text' => 'required|string|max:255',
         ];
     }
 }

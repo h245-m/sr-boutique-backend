@@ -88,15 +88,10 @@ class CategoryController extends Controller
     public function show_sub_category(ShowSubCategoryRequest $request)
     {
         $data = $request->validated();
-        $perPage = $data['per_page'] ?? 15;
 
-        $query = Category::query()->whereNotNull('parent_id')->select("id" , "name");
+        $query = Category::query()->where('parent_id' , $data['id']);
 
-        $query->when(isset($data['query']) , function($query) use($data){
-            $query->where('name' , 'like' , '%'.$data['query'].'%'); 
-        });
-
-        $categories = $query->paginate($perPage);
+        $categories = $query->paginate($data['per_page'] ?? 15);
 
         return $this->respondOk($categories, 'Categories fetched successfully');
     }
