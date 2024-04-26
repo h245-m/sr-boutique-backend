@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Message;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class IndexChatMessagesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|string|min:8',
-            'roles' => 'required|array',
-            'roles.*' => 'string|distinct|in:over_view,category,product,order,stock,shipping,admin,setting',
-            'phone' => 'phone',
+            'user_id' => 'required|integer',
         ];
     }
 }

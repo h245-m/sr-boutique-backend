@@ -56,8 +56,7 @@ Route::middleware('loggedIn')->group( function() {
         Route::get("/message/send_as_client", [MessageController::class, "send_as_client"]);
     });
 
-    Route::apiResource("message", MessageController::class);
-
+    Route::get("message/index_chat_messages", [MessageController::class,"index_chat_messages"]);
     
     // Route::middleware('super_admin')->group( function() {
     //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
@@ -95,8 +94,9 @@ Route::middleware('loggedIn')->group( function() {
         Route::apiResource("user", UserController::class);
     });
 
-    Route::middleware('hasAnyRole:message,super_admin')->group( function() {
-        // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+    Route::middleware('hasAnyRole:message')->group( function() {
+        Route::apiResource("message", MessageController::class)->only(['index', 'store']);
+        Route::get("message/index_chat_messages", [MessageController::class,"index_chat_messages"]);
     });
 
     Route::middleware('hasAnyRole:shipping,super_admin')->group( function() {
@@ -113,7 +113,7 @@ Route::middleware('loggedIn')->group( function() {
 Route::apiResource("shipping", ShippingController::class , ['only' => [ 'index']]);
 Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
 Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
-Route::apiResource("rating", RatingController::class , ['only' => ['index']]);
+Route::apiResource("rating", RatingController::class , ['only' => ['index' , 'update']]);
 Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_category']);
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Message\IndexChatMessagesRequest;
 use App\Http\Requests\SendMessageAsClientRequest;
 use App\Models\Message;
 use App\Http\Requests\StoreMessageRequest;
@@ -23,12 +24,23 @@ class MessageController extends Controller
                 ->where('receiver_id', 3)
                 ->groupBy('sender_id');
         })
-        ->with('sender') // Load sender data
-        ->orderBy('id', 'desc') // Order by any desired column
+        ->with('sender') 
+        ->latest()
         ->paginate();
-            // ->pluck('sender_id');
-        return $distinctSenderMessages;
+
+        return $this->respondOk($distinctSenderMessages);
     }
+
+    public function index_chat_messages(IndexChatMessagesRequest $request)
+    {
+        $messages = Message::where("sender_id" , $request->user_id)
+                        ->where("receiver_id" , $request->receiver_id)
+                        ->latest()
+                        ->paginate();
+
+        return $this->respondOk($messages);
+    }
+
 
     /**
      * Store a newly created resource in storage.
