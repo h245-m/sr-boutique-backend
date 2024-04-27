@@ -39,7 +39,7 @@ class StoreProductRequest extends FormRequest
             'colors' => 'required|array|max:20',
             'colors.*' => 'string|max:255|distinct|hex_color',
             'sizes' => 'required|array|distinct',
-            'sizes.*' => 'string|max:255|distinct|in:S,M,L,XL,XXL,XXXL,XXXXL,XXXXXL,XXXXXXL,XXXXXXXL',
+            'sizes.*' => ['string', 'max:255', 'distinct', 'regex:^(S|M|L|X*L)$^i'],
         ];
     }
 }
