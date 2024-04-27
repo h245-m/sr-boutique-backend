@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Validator;
 
 class UpdateProductRequest extends FormRequest
@@ -31,7 +32,7 @@ class UpdateProductRequest extends FormRequest
             'expires_at' => 'date|format:Y-m-d H:m:s i|after:now',
             'price' => ['required_with:discount','max:999998.99' , 'numeric' , 'decimal:0,2'],
             'discount' => ['required_with:price','max:999999.99' , 'numeric' , 'decimal:0,2'],
-            'sku' => 'string|max:255,unique:products,sku',
+            'sku' => ['string','max:255',Rule::unique('products')->ignore($this->product)],
             'category_id' => 'integer|min:1|exists:categories,id',
             'image' => 'array|min:1|max:1',
             'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',

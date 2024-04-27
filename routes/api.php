@@ -26,23 +26,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Auth Routes are in auth.php
-Route::get("test" , function(StoreMessageRequest $request) {
-    $data = $request->validated();
-    $user = $request->user;
 
-    $data['receiver_id'] = $data['user_id'];
-    $data['sender_id'] = $user->id;
-    $message = Message::create($data);
 
-    broadcast(new \App\Events\MessageSent($message));
-    return response()->json(['message' => $message], 200);
-});
 Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_category']);
 
 Route::middleware('loggedIn')->group( function() {
 
     Route::post("user/update_profile", [UserController::class , 'update_profile']);
-
 
     Route::middleware('client')->group( function() {
         Route::apiResource("rating", RatingController::class , ['only' => ['store' , 'destroy']]);
