@@ -23,7 +23,7 @@ class IndexOrderRequest extends FormRequest
     {
         return [
             'query' => 'string',
-            'status' => 'string|in:In_Progress,Cancelled,Delayed,Shipped,Out_For_Delivery,Delivered,Returned_To_Sender',
+            'status' => 'string|in:Pending,In_Progress,Cancelled,Delayed,Shipped,Out_For_Delivery,Delivered,Returned_To_Sender',
             'sort_by' => 'string|in:id,name,city', // also take asc or desc
             'asc' => 'boolean|required_with:sort_by',
             'per_page' => 'integer|min:1|max:30',
