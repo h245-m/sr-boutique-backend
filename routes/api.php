@@ -37,7 +37,7 @@ Route::get("test" , function(StoreMessageRequest $request) {
     broadcast(new \App\Events\MessageSent($message));
     return response()->json(['message' => $message], 200);
 });
-
+Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_category']);
 
 Route::middleware('loggedIn')->group( function() {
 
@@ -114,6 +114,6 @@ Route::apiResource("shipping", ShippingController::class , ['only' => [ 'index']
 Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
 Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
 Route::apiResource("rating", RatingController::class , ['only' => ['index' , 'update']]);
-Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_category']);
+
 
 
