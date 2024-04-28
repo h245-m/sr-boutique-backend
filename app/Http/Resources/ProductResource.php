@@ -27,6 +27,7 @@ class ProductResource extends JsonResource
             'live' => $this->live,
             'sku' => $this->sku,
             'category_id' => $this->category_id,
+            'expires_at' => $this->expires_at,
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
             'sizes' => $this->when($this->sizes , $this->sizes),
             'colors' => $this->when($this->colors , $this->colors),

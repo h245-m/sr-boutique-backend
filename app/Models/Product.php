@@ -12,7 +12,7 @@ class Product extends Model implements HasMedia
 {
     use HasFactory , CustomRateable , InteractsWithMedia;
 
-    public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'colors' , 'sizes'];
+    public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'colors' , 'sizes' , 'expires_at'];
     
     protected $casts = [
         'colors' => 'json',

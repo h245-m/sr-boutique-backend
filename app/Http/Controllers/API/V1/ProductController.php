@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        $query = Product::isLive(true);
+        $query = Product::isLive(true)->isExpired(false);
 
         $query->when(isset($data['query']), function ($query) use ($data) {
             $query->where('name', 'like', '%' . $data['query'] . '%');
