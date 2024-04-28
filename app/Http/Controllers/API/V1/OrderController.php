@@ -50,8 +50,9 @@ class OrderController extends Controller
             $query->selectRaw(
                 "products.id,
                  products.quantity,
-                 products.price,
                  products.priceAfter,
+                 products.name,
+                 products.sku,
                  order_product.quantity * (products.price - products.priceAfter) as total_discount"
             );
         }]);
@@ -99,8 +100,9 @@ class OrderController extends Controller
             $query->selectRaw(
                 "products.id,
                  products.quantity,
-                 products.price,
                  products.priceAfter,
+                 products.name,
+                 products.sku,
                  order_product.quantity * (products.price - products.priceAfter) as total_discount"
             );
         }]);
