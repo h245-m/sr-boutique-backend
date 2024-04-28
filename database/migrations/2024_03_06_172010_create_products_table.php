@@ -23,8 +23,7 @@ return new class extends Migration
             $table->decimal('price', 15,2);
             $table->decimal('priceAfter', 15,2)->nullable();
             $table->string("sku")->unique();
-            $table->json("colors");
-            $table->json("sizes");
+            $table->json("attributes");
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
         });
     }

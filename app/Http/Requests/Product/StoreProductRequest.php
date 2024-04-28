@@ -36,10 +36,8 @@ class StoreProductRequest extends FormRequest
             'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',
             'additional_images' => 'array|max:20',
             'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
-            'colors' => 'required|array|max:20',
-            'colors.*' => 'string|max:255|distinct|hex_color',
-            'sizes' => 'required|array|distinct',
-            'sizes.*' => ['string', 'max:255', 'distinct', 'regex:^(S|M|L|X*L)$^i'],
+            'attributes' => ['required' , 'array' ,'min:1' , 'max:3'],
+            'attributes.*' => 'required|string|distinct|in:Small,Medium,Large',
         ];
     }
 }

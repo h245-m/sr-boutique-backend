@@ -38,10 +38,8 @@ class UpdateProductRequest extends FormRequest
             'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',
             'additional_images' => 'array|min:1|max:6',
             'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
-            'colors' => 'array|max:20',
-            'colors.*' => 'string|max:255|hex_color',
-            'sizes' => 'array|max:20|distinct',
-            'sizes.*' => ['string', 'max:255', 'distinct', 'regex:^(S|M|L|X*L)$^i'],
+            'attributes' => ['required' , 'array' ,'min:1' , 'max:3'],
+            'attributes.*' => 'string|distinct|in:Small,Medium,Large',
         ];
     }
 }

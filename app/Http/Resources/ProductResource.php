@@ -26,10 +26,10 @@ class ProductResource extends JsonResource
             'rate' => $this->averageRating(),
             'live' => $this->live,
             'sku' => $this->sku,
+            'wish_list_count' => $this->when($this->wish_list_count , $this->wish_list_count),
             'category_id' => $this->category_id,
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
-            'sizes' => $this->when($this->sizes , $this->sizes),
-            'colors' => $this->when($this->colors , $this->colors),
+            'attributes' => $this->when($this->sizes , $this->sizes),
             'randomImages' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
                 return $this->whenLoaded('randomImages' , RatingUserResource::collection($this->randomImages));
             }),

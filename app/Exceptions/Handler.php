@@ -47,6 +47,14 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => 'User not found.'
                 ], 404);
+            } else if ($request->is('api/shipping/*')) {
+                return response()->json([
+                    'message' => 'Shipping not found.'
+                ], 404);
+            } else if ($request->is('api/address/*')) {
+                return response()->json([
+                    'message' => 'Address not found.'
+                ], 404);
             }
         });
 

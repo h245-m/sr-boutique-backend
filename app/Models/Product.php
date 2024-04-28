@@ -12,11 +12,10 @@ class Product extends Model implements HasMedia
 {
     use HasFactory , CustomRateable , InteractsWithMedia;
 
-    public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'colors' , 'sizes'];
+    public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'attributes'];
     
     protected $casts = [
-        'colors' => 'json',
-        'sizes' => 'json',
+        'attributes' => 'json',
     ];
 
     public function category()
@@ -33,10 +32,6 @@ class Product extends Model implements HasMedia
     public function orders()
     {
         return $this->belongsToMany(Order::class , 'order_product')->withPivot('quantity');
-    }
-
-    public function attributes(){
-        return $this->hasMany(Attribute::class);
     }
 
     public function users_wish_list()

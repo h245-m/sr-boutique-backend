@@ -12,33 +12,19 @@ class StoreShippingRequest extends FormRequest
      */
 
     private $citits = [
-        "Alexandria",
-        "Aswan",
-        "Asyut",
-        "Beheira",
-        "Beni Suef",
-        "Cairo",
-        "Dakahlia",
-        "Damietta",
-        "Faiyum",
-        "Gharbia",
-        "Giza",
-        "Ismailia",
-        "Kafr el-Sheikh",
-        "Luxor",
-        "Matrouh",
-        "Minya",
-        "Monufia",
-        "New Valley",
-        "North Sinai",
-        "Port Said",
-        "Qalyubia",
-        "Qena",
-        "Red Sea",
-        "Sharqia",
-        "Sohag",
-        "South Sinai",
-        "Suez"
+        "Asir",
+        "Al Bahah",
+        "Al Jawf",
+        "Al Madinah",
+        "Al-Qassim",
+        "Eastern Province",
+        "Ha'il",
+        "Jizan",
+        "Makkah",
+        "Najran",
+        "Northern Borders",
+        "Riyadh",
+        "Tabuk"
     ];
 
     public function authorize(): bool
