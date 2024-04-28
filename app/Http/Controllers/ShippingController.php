@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\IndexShippingRequest;
 use App\Models\Shipping;
 use App\Http\Requests\StoreShippingRequest;

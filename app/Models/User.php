@@ -85,8 +85,8 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsToMany(Product::class , 'wish_list');
     }
 
-    public function addresses(){
-        return $this->hasOne(Address::class);
+    public function chat_rooms(){
+        return $this->hasMany(ChatRoom::class , 'user1_id')->orWhere('user2_id' , $this->id);
     }
 }
 

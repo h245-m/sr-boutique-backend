@@ -41,20 +41,10 @@ class OrderController extends Controller
             }
         });
         
-        $query->leftJoin('order_product', 'orders.id', '=', 'order_product.order_id')
-        ->leftJoin('products', 'order_product.product_id', '=', 'products.id')
-        ->select('orders.id', 'orders.user_id', 'orders.status', 'orders.total', 'orders.email', 'orders.phone', 'orders.address', 'orders.name', 'orders.city', 'orders.postal_code', 'orders.created_at', 'orders.updated_at')
-        ->selectRaw('SUM(order_product.quantity * (products.price - products.priceAfter)) as total_discount')
-        ->groupBy('orders.id', 'orders.user_id', 'orders.status', 'orders.total', 'orders.email', 'orders.phone', 'orders.address', 'orders.name', 'orders.city', 'orders.postal_code', 'orders.created_at', 'orders.updated_at')
-        ->with(['products' => function ($query) {
-            $query->selectRaw(
-                "products.id,
-                 products.quantity,
-                 products.price,
-                 products.priceAfter,
-                 order_product.quantity * (products.price - products.priceAfter) as total_discount"
-            );
-        }]);
+        // $query->with(['products' => function ($query) {
+        //     $query->select('order_id', DB::raw('SUM(quantity * (price - priceAfter)) as total_discount'))
+        //           ->groupBy('order_id');
+        // }]);
 
         $orders = $query->paginate($per_page);
 
@@ -189,7 +179,8 @@ class OrderController extends Controller
                     'shipping' => $shipping,
                 ]);
 
-                $user->cart()->detach();
+                // Clear the cart after successful checkout
+                // $user->cart()->detach();
 
                 DB::commit();
 
@@ -214,8 +205,10 @@ class OrderController extends Controller
     
             }
     
-            $user->cart()->detach();
+            // Clear the cart after successful checkout
+            // $user->cart()->detach();
                     
+    
             DB::commit();
     
             $shipping = min($pricePerOrder ?? PHP_INT_MAX , $priceOfCity);
@@ -228,6 +221,9 @@ class OrderController extends Controller
 
         }
         
+
+      
+
     }
 
     /**

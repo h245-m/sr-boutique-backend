@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -55,7 +54,7 @@ class StatsController extends Controller
             ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
             ->get();
 
-        return $this->respondOk([
+        return [
             'totalEarning' => $totalEarning,
             'percentageOfEarningToday' => $percentageOfEarningToday,
             'totalOrders' => $totalOrders,
@@ -67,6 +66,6 @@ class StatsController extends Controller
             'ordersByDay' => $ordersByDay,
             'ordersByWeek' => $ordersByWeek,
             'ordersByMonth' => $ordersByMonth
-        ]);
+        ];
     }
 }

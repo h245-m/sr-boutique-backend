@@ -109,7 +109,7 @@ class ProductController extends Controller
         $usersHasImages = User::whereIn('id' , $ratingsIds)->select('id')->inRandomOrder()->limit(5)->get();
         $product->setRelation('ratings',  $product->ratings()->select('id', 'rating', 'comment', 'rateable_id' , 'user_id')->paginate());
         $product->setRelation('randomImages', $usersHasImages);
-        $product->setRelation('wish_list_count', $product->users_wish_list()->count());
+
         return $this->respondOk(ProductResource::make($product), 'Product fetched successfully');
     }
 
