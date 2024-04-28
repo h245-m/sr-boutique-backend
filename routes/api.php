@@ -8,10 +8,8 @@ use App\Http\Controllers\API\V1\ProductController;
 use App\Http\Controllers\API\V1\RatingController;
 use App\Http\Controllers\API\V1\WishListController;
 use App\Http\Controllers\API\V1\UserController;
-use App\Http\Controllers\ShippingController;
-use App\Http\Controllers\StatsController;
-use App\Http\Requests\StoreMessageRequest;
-use App\Models\Message;
+use App\Http\Controllers\API\V1\ShippingController;
+use App\Http\Controllers\API\V1\StatsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,16 +45,6 @@ Route::middleware('loggedIn')->group( function() {
     });
 
     Route::get("message/index_chat_messages", [MessageController::class,"index_chat_messages"]);
-    
-    // Route::middleware('super_admin')->group( function() {
-    //     Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
-    //     Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
-    //     Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
-    //     Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
-    //     Route::apiResource("order", OrderController::class , ['only' => ['update', 'index']]);
-    //     Route::apiResource("user", UserController::class);
-    //     Route::apiResource("shipping", ShippingController::class);
-    // });
     
     Route::middleware('hasAnyRole:client,order,super_admin')->group( function() {
         Route::apiResource("order", OrderController::class , ['only' => ['show']]);
