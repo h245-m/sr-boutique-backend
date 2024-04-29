@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\vendor\Chatify\Api\MessagesController;
 use Illuminate\Support\Facades\Route;
 

@@ -27,7 +27,7 @@
                 const myHeaders = new Headers();
                 myHeaders.append("Accept", "application/json");
                 myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", "Bearer 3|sdfcUOvM2lnNyRFy6XoN9y7zIXOAyX7xetY3eRV43292ae8d");
+                myHeaders.append("Authorization", "Bearer 4|w0HqbierMJ1PdUphEgSft0dAhKU0Iy0VWRifA5knaef929d9");
                 const raw = JSON.stringify({
                     "socket_id": socketId,
                     "channel_name": channelName
@@ -40,7 +40,7 @@
                     redirect: 'follow'
                 };
 
-                const response = await fetch("http://127.0.0.1:8000/chatify/api/chat/auth", requestOptions);
+                const response = await fetch("http://localhost:8000/chatify/api/chat/auth", requestOptions);
                 const result = await response.json();
 
                 return result
