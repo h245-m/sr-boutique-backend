@@ -14,14 +14,14 @@ class StatsController extends Controller
 
     public function index()
     {
-        $totalEarning = Order::sum('total') == 0 ? 1 : Order::sum('total');
-        $percentageOfEarningToday = Order::whereDate('created_at', date('Y-m-d'))->sum('total') / $totalEarning * 100;
+        $totalEarning = Order::sum('total');
+        $percentageOfEarningToday = $totalEarning = 0 ? 0 : Order::whereDate('created_at', date('Y-m-d'))->sum('total') / $totalEarning * 100;
 
-        $totalOrders = Order::count() == 0 ? 1 : Order::count();
-        $totalOrdersPercentageToday = Order::whereDate('created_at', date('Y-m-d'))->count() / $totalOrders * 100;
+        $totalOrders = Order::count();
+        $totalOrdersPercentageToday = $totalOrders = 0 ? 0 : Order::whereDate('created_at', date('Y-m-d'))->count() / $totalOrders * 100;
 
-        $totalCustomers = User::role('client')->count() == 0 ? 1 : User::role('client')->count();
-        $totlaCustomersPercentageToday = User::role('client')->whereDate('created_at', date('Y-m-d'))->count() / $totalCustomers * 100;
+        $totalCustomers = User::role('client')->count();
+        $totlaCustomersPercentageToday = $totalCustomers = 0 ? 0 : User::role('client')->whereDate('created_at', date('Y-m-d'))->count() / $totalCustomers * 100;
 
         $recntOrders = Order::orderBy('id', 'desc')->take(5)->get();
 
