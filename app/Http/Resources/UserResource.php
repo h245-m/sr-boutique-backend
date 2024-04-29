@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'lastMessage' => $this->when($this->lastMessage, $this->lastMessage),
             'roles' => $this->getRoleNames(),
             'token' => $this->when($this->token, $this->token),
+            'created_at' => $this->created_at
         ];
     }
 }

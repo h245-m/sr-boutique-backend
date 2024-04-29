@@ -219,7 +219,8 @@ class MessagesController extends Controller
         }else {
 
             // get all users that received/sent message from/to [Auth user]
-            $users = User::leftJoin('ch_messages', function ($join) {
+            $users = User::select('users.*', DB::raw('MAX(ch_messages.created_at) as max_created_at'))
+            ->leftJoin('ch_messages', function ($join) {
                 $join->on('users.id', '=', 'ch_messages.from_id')
                     ->orOn('users.id', '=', 'ch_messages.to_id');
             })
