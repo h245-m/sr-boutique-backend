@@ -235,6 +235,7 @@ class MessagesController extends Controller
             ->when($request->input("query"), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->input("query") . '%');
             })
+            ->withCount('orders')
             ->orderBy('max_created_at', 'desc')
             ->paginate($request->per_page ?? $this->perPage);
 
@@ -243,7 +244,7 @@ class MessagesController extends Controller
                 $user->unread = Chatify::countUnseenMessages($user->id);
                 $user->lastMessage = Chatify::getLastMessageQuery($user->id);
             }
-
+            
             return Response::json([
                 'users' => UserResource::collection($users),
                 'total' => $users->total(),

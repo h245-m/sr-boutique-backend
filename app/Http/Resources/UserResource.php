@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'unread' =>$this->unread,
             'max_created_at' => $this->when($this->max_created_at, $this->max_created_at),
             'lastMessage' => $this->when($this->lastMessage, $this->lastMessage),
+            'orders_count' => $this->when($this->orders_count, $this->orders_count),
             'roles' => $this->getRoleNames(),
             'token' => $this->when($this->token, $this->token),
             'created_at' => $this->created_at
