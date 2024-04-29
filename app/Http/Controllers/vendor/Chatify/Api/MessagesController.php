@@ -290,6 +290,19 @@ class MessagesController extends Controller
         ], 200);
     }
 
+
+    public function deleteMessage(Request $request)
+    {
+        // delete
+        $delete = Chatify::deleteMessage($request['id']);
+
+        // send the response
+        return Response::json([
+            'deleted' => $delete ? 1 : 0,
+        ], 200);
+    }
+
+    
     /**
      * Search in messenger
      *
@@ -297,6 +310,7 @@ class MessagesController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
+     
     public function search(Request $request)
     {
         $input = trim(filter_var($request['input']));

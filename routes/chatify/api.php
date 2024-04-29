@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\vendor\Chatify\Api\MessagesController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -7,7 +9,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::post('/chat/auth', 'MessagesController@pusherAuth')->name('api.pusher.auth');
 
-Route::middleware(['loggedIn','client,message'])->group(function(){
+Route::middleware(['loggedIn','hasAnyRole:client,message'])->group(function(){
     /**
      * Send message route
      */
@@ -37,6 +39,12 @@ Route::middleware(['loggedIn','client,message'])->group(function(){
      * Set active status
      */
     Route::post('/setActiveStatus', 'MessagesController@setActiveStatus')->name('api.activeStatus.set');
+
+    /**
+     * Delete message
+     */
+    Route::post('/deleteMessage', [MessagesController::class, 'deleteMessage'])->name('message.delete');
+
 });
 
 Route::middleware(['loggedIn','message'])->group(function(){
