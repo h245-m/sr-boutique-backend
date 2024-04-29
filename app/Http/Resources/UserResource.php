@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'active_status' => $this->when($this->active_status, $this->active_status),
             'unread' =>$this->unread,
             'max_created_at' => $this->when($this->max_created_at, $this->max_created_at),
+            'lastMessage' => $this->when($this->lastMessage, $this->lastMessage),
             'roles' => $this->getRoleNames(),
             'token' => $this->when($this->token, $this->token),
         ];

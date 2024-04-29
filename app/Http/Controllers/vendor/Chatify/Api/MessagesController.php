@@ -241,6 +241,7 @@ class MessagesController extends Controller
             
             foreach ($users as $user) {
                 $user->unread = Chatify::countUnseenMessages($user->id);
+                $user->lastMessage = Chatify::getLastMessageQuery($user->id);
             }
 
             return Response::json([
