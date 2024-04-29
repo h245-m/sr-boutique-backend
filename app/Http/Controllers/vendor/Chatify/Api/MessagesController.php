@@ -224,22 +224,27 @@ class MessagesController extends Controller
                 $join->on('users.id', '=', 'ch_messages.from_id')
                     ->orOn('users.id', '=', 'ch_messages.to_id');
             })
-            ->where(function ($q) {
-                $q->where('ch_messages.from_id', Auth::user()->id)
-                    ->orWhere('ch_messages.to_id', Auth::user()->id);
+            ->when($request->input('contacts'), function ($query) use ($request) {
+                $query->where(function ($q) {
+                    $q->where('ch_messages.from_id', Auth::user()->id)
+                        ->orWhere('ch_messages.to_id', Auth::user()->id);
+                });
             })
             ->where('users.id', '!=', Auth::user()->id)
             ->groupBy('users.id')
+            ->when($request->input("query"), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->input("query") . '%');
+            })
             ->orderBy('max_created_at', 'desc')
             ->paginate($request->per_page ?? $this->perPage);
 
             
             foreach ($users as $user) {
-                $user->setRelation('unread', Chatify::countUnseenMessages($user));
+                $user->unread = Chatify::countUnseenMessages($user->id);
             }
 
             return Response::json([
-                'users' => UserResource::collection($users->items()),
+                'users' => UserResource::collection($users),
                 'total' => $users->total(),
                 'last_page' => $users->lastPage(),
             ], 200);
@@ -291,18 +296,30 @@ class MessagesController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function search(Request $request)
     {
         $input = trim(filter_var($request['input']));
 
-        $records = User::where('id','!=',Auth::user()->id)
-            ->where('name', 'LIKE', "%{$input}%")
+        $users = User::select('users.*', DB::raw('MAX(ch_messages.created_at) as max_created_at'))
+            ->leftJoin('ch_messages', function ($join) {
+                $join->on('users.id', '=', 'ch_messages.from_id')
+                    ->orOn('users.id', '=', 'ch_messages.to_id');
+            })
+            ->where('users.id', '!=', Auth::user()->id)
+            ->where('users.name', 'LIKE', "%{$input}%")
+            ->groupBy('users.id')
+            ->orderBy('max_created_at', 'desc')
             ->paginate($request->per_page ?? $this->perPage);
 
+        foreach ($users as $user) {
+            $user->unread = Chatify::countUnseenMessages($user->id);
+        }
+
         return Response::json([
-            'records' => UserResource::collection($records->items()),
-            'total' => $records->total(),
-            'last_page' => $records->lastPage()
+            'records' => UserResource::collection($users->items()),
+            'total' => $users->total(),
+            'last_page' => $users->lastPage()
         ], 200);
         
         

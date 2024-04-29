@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::post('/chat/auth', 'MessagesController@pusherAuth')->name('api.pusher.auth');
 
-Route::middleware(['loggedIn'])->group(function(){
+Route::middleware(['loggedIn','message'])->group(function(){
     Route::post('/idInfo', 'MessagesController@idFetchData')->name('api.idInfo');
 
     /**
