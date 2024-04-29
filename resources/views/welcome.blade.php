@@ -1,31 +1,78 @@
 <head>
   <title>Pusher Test</title>
   <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-  <!-- @vite(['resources/css/app.css', 'resources/js/app.js']) -->
   <script>
 
     Pusher.logToConsole = true;
 
-    var pusher = new Pusher('ce36596acdd6873dc8bf', {
-      cluster: 'eu',
-      authEndpoint: '/broadcasting/auth',
-      auth: {
-          headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          }
-      }
-    });
+    // var pusher = new Pusher('ce36596acdd6873dc8bf', {
+    //   cluster: 'eu',
+    //   authEndpoint: '/broadcasting/auth',
+    //   auth: {
+    //       headers: {
+    //           'X-CSRF-TOKEN': '{{ csrf_token() }}',
+    //       }
+    //   }
+    // });
 
-    var channel = pusher.subscribe('private-chat.{{ Auth::user()->id }}' );
-    channel.bind('chatMessage', function(data) {
-      console.log(JSON.stringify(data));
-    });
+    // var channel = pusher.subscribe('private-chat.{{ Auth::user()->id }}' );
+    // channel.bind('chatMessage', function(data) {
+    //   console.log(JSON.stringify(data));
+    // });
 
-    // window.onload=function(){
-    //     window.Echo.private('test').listen('test', function(data) {
-    //       alert("Gamed");
-    //     });
-    // }
+
+
+    async function fetchAuth(socketId, channelName) {
+            try {
+                const myHeaders = new Headers();
+                myHeaders.append("Accept", "application/json");
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Authorization", "Bearer 3|sdfcUOvM2lnNyRFy6XoN9y7zIXOAyX7xetY3eRV43292ae8d");
+                const raw = JSON.stringify({
+                    "socket_id": socketId,
+                    "channel_name": channelName
+                });
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                const response = await fetch("http://127.0.0.1:8000/chatify/api/chat/auth", requestOptions);
+                const result = await response.json();
+
+                return result
+            } catch (error) {
+                console.error('error', error);
+            }
+        }
+
+
+
+
+        const pusher = new Pusher("ce36596acdd6873dc8bf", {
+            cluster: 'eu',
+            channelAuthorization: {
+                customHandler : async ({socketId, channelName}, callback) => {
+                    const data = await fetchAuth(socketId, channelName);
+                    callback(null, {
+                        "auth": data["auth"],
+                        "channel_data": data["channel_data"]
+                    })
+                },
+            }
+        });
+
+          var channel = pusher.subscribe('private-chatify.{{ Auth::user()->id }}' );
+          channel.bind('client-seen', function(data) {
+            console.log(JSON.stringify(data));
+          });
+          channel.bind('client-contactItem', function(data) {
+            console.log(JSON.stringify(data));
+          });
+
 
   </script>
 </head>
