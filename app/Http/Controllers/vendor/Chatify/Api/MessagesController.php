@@ -170,14 +170,9 @@ class MessagesController extends Controller
     public function fetch(Request $request)
     {
         $query = Chatify::fetchMessagesQuery($request['id'])->latest();
-        $messages = $query->paginate($request->per_page ?? $this->perPage);
-        $totalMessages = $messages->total();
-        $lastPage = $messages->lastPage();
+        $messages = $query->get();
         $response = [
-            'total' => $totalMessages,
-            'last_page' => $lastPage,
-            'last_message_id' => collect($messages->items())->last()->id ?? null,
-            'messages' => $messages->items(),
+            'messages' => $messages,
         ];
         return Response::json($response);
     }
@@ -236,8 +231,8 @@ class MessagesController extends Controller
             })
             ->withCount('orders')
             ->orderBy('max_created_at', 'desc')
-            ->paginate($request->per_page ?? $this->perPage);
-
+            ->get();
+            
             
             foreach ($users as $user) {
                 $user->unread = Chatify::countUnseenMessages($user->id);
@@ -246,8 +241,6 @@ class MessagesController extends Controller
             
             return Response::json([
                 'users' => UserResource::collection($users),
-                'total' => $users->total(),
-                'last_page' => $users->lastPage(),
             ], 200);
 
         }
