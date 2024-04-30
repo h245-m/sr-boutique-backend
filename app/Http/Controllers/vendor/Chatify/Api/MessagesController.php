@@ -444,6 +444,7 @@ class MessagesController extends Controller
         $status = User::where('id', Auth::user()->id)->update(['active_status' => $activeStatus]);
         Chatify::push('presence-activeStatus', 'subscription_succeeded' , [
             "id" => Auth::user()->id,
+            "active_status" => $activeStatus,
         ]);
         return Response::json([
             'status' => $activeStatus,
@@ -457,8 +458,8 @@ class MessagesController extends Controller
         $typing = $request['typing'] > 0 ? 1 : 0;
 
         Chatify::push("private-chatify.".$request['id'], 'typing', [
-            'from_id' => Auth::user()->id,
-            'to_id' => $request['id'],
+            'from_id' => $from,
+            'to_id' => $to,
             'typing' => $typing,
         ]);
         return Response::json([
