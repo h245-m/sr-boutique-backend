@@ -27,7 +27,7 @@
                 const myHeaders = new Headers();
                 myHeaders.append("Accept", "application/json");
                 myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", "Bearer 4|w0HqbierMJ1PdUphEgSft0dAhKU0Iy0VWRifA5knaef929d9");
+                myHeaders.append("Authorization", "Bearer 12|nopFRMmR7R50TVS1R05mFcyLZ7XCLRR4vEsfFZQO04e119d5");
                 const raw = JSON.stringify({
                     "socket_id": socketId,
                     "channel_name": channelName
@@ -66,6 +66,11 @@
         });
 
           var channel = pusher.subscribe('private-chatify.{{ Auth::user()->id }}' );
+          var channel2 = pusher.subscribe('presence-activeStatus');
+
+          channel2.bind('subscription_succeeded', function(members) {
+            alert("subscribed");
+          })
           channel.bind('client-seen', function(data) {
             console.log(JSON.stringify(data));
           });

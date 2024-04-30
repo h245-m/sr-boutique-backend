@@ -157,7 +157,6 @@ class MessagesController extends Controller
             'status' => '200',
             'error' => $error,
             'message' => $messageData ?? [],
-            'tempID' => $request['temporaryMsgId'],
         ]);
     }
 
@@ -436,8 +435,11 @@ class MessagesController extends Controller
     {
         $activeStatus = $request['status'] > 0 ? 1 : 0;
         $status = User::where('id', Auth::user()->id)->update(['active_status' => $activeStatus]);
+        Chatify::push('presence-activeStatus', 'subscription_succeeded' , [
+            "id" => Auth::user()->id,
+        ]);
         return Response::json([
-            'status' => $status,
+            'status' => $activeStatus,
         ], 200);
     }
 }
