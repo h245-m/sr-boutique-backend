@@ -186,6 +186,13 @@ class MessagesController extends Controller
     {
         // make as seen
         $seen = Chatify::makeSeen($request['id']);
+
+        Chatify::push("private-chatify.".$request['id'], 'seen', [
+            'from_id' => Auth::user()->id,
+            'to_id' => $request['id'],
+            'seen' => true,
+        ]);
+
         // send the response
         return Response::json([
             'status' => $seen,
@@ -442,4 +449,21 @@ class MessagesController extends Controller
             'status' => $activeStatus,
         ], 200);
     }
+
+    public function setTyping(Request $request)
+    {
+        $to = $request['id'];
+        $from = Auth::user()->id;
+        $typing = $request['typing'] > 0 ? 1 : 0;
+
+        Chatify::push("private-chatify.".$request['id'], 'typing', [
+            'from_id' => Auth::user()->id,
+            'to_id' => $request['id'],
+            'typing' => $typing,
+        ]);
+        return Response::json([
+            'status' => 1,
+        ], 200);
+    }
+
 }

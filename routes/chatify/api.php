@@ -44,6 +44,8 @@ Route::middleware(['loggedIn','hasAnyRole:client,message'])->group(function(){
      */
     Route::post('/deleteMessage', [MessagesController::class, 'deleteMessage'])->name('message.delete');
 
+
+    Route::get('setTyping', 'MessagesController@setTyping')->name('api.setTyping');
 });
 
 Route::middleware(['loggedIn','message'])->group(function(){
