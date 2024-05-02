@@ -22,7 +22,7 @@ class CategoryResource extends JsonResource
             'children' => $this->when(($request->is('api/category') && $request->isMethod("GET") && !isset($this->parent_id)), function () { 
                 return $this->whenLoaded('children' , CategoryResource::collection($this->children));
             }),
-            'products' => $this->when($request->is('api/category/*') && $request->isMethod("GET"), function () { 
+            'products' => $this->when($request->is('api/category/*') && !$request->is('api/category/show-sub-category') && $request->isMethod("GET"), function () { 
                 return $this->when(isset($this->products) , ProductResource::collection($this->products))->response()->getData();
             }),
         ];

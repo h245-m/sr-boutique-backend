@@ -93,7 +93,7 @@ class CategoryController extends Controller
 
         $categories = $query->paginate($data['per_page'] ?? 15);
 
-        return $this->respondOk($categories, 'Categories fetched successfully');
+        return $this->respondOk(CategoryResource::collection($categories), 'Categories fetched successfully');
     }
 
     /**
