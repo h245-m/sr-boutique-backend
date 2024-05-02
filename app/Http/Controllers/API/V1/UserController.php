@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\IndexUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -94,6 +95,12 @@ class UserController extends Controller
 
         return $this->respondOk(UserResource::make($user));
 
+    }
+
+    public function my_profile(Request $request)
+    {
+        $user = $request->user;
+        return $this->respondOk(UserResource::make($user));
     }
 
     /**

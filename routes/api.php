@@ -31,6 +31,7 @@ Route::get("category/show-sub-category", [CategoryController::class , 'show_sub_
 Route::middleware('loggedIn')->group( function() {
 
     Route::post("user/update_profile", [UserController::class , 'update_profile']);
+    Route::get("user/my_profile", [UserController::class , 'my_profile']);
 
     Route::middleware('client')->group( function() {
         Route::apiResource("rating", RatingController::class , ['only' => ['store' , 'destroy']]);
