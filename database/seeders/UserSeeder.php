@@ -26,7 +26,6 @@ class UserSeeder extends Seeder
         $adminRole = Role::create(['name' => 'shipping']);
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole = Role::create(['name' => 'setting']);
-
         $clientRole = Role::create(['name' => 'client']);
 
         $admin = User::create([

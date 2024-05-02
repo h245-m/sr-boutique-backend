@@ -35,6 +35,7 @@ class User extends Authenticatable implements HasMedia
         'nick',
         'address',
         'active_status',
+        'last_seen'
     ];
 
     /**

@@ -11,7 +11,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    public $fillable = ['status', 'user_id', 'product_id', 'total' , 'name' , 'email' , 'phone' , 'address' , 'city' , 'postal_code' , 'shipping'];
+    public $fillable = ['status', 'user_id', 'product_id', 'total' , 'name' , 'email' , 'phone' , 'address' , 'city' , 'postal_code' , 'shipping' , 'pay_on_delivery'];
 
     public function user()
     {

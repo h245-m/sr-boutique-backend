@@ -441,7 +441,16 @@ class MessagesController extends Controller
     public function setActiveStatus(Request $request)
     {
         $activeStatus = $request['status'] > 0 ? 1 : 0;
-        $status = User::where('id', Auth::user()->id)->update(['active_status' => $activeStatus]);
+
+        $dataToUpdate = [
+            'active_status' => $activeStatus
+        ];
+        
+        if ($activeStatus == 0) {
+            $dataToUpdate['last_seen'] = now();
+        }
+
+        $status = User::where('id', Auth::user()->id)->update($dataToUpdate);
         Chatify::push('presence-activeStatus', 'subscription_succeeded' , [
             "id" => Auth::user()->id,
             "active_status" => $activeStatus,

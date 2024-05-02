@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'image' => $this->when($this->getFirstMediaUrl("main") != "", MediaResource::make($this->getMedia("main")->first())),
             'active_status' => $this->when($this->active_status, $this->active_status),
             'unread' =>$this->unread,
+            'last_seen' => $this->when($this->active_status == 1, $this->last_seen),
             'max_created_at' => $this->when($this->max_created_at, $this->max_created_at),
             'lastMessage' => $this->when($this->lastMessage, $this->lastMessage),
             'orders_count' => $this->when($this->orders_count, $this->orders_count),

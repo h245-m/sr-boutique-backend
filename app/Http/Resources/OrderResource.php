@@ -22,7 +22,7 @@ class OrderResource extends JsonResource
             "shipping" => $this->shipping,
             'products_count' => $this->products_count,
             'products' => ProductResource::collection($this->products),
-
+            'pay_on_delivery' => $this->pay_on_delivery
         ];
     }
 }

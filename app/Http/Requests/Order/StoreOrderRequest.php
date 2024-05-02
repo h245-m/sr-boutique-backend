@@ -31,6 +31,7 @@ class StoreOrderRequest extends FormRequest
             'name' => 'required|string|max:255',
             'city' => ['required','string','max:255' , new ValidCityShipping()],
             'postal_code' => 'required|digits:5|integer',
+            'pay_on_delivery' => 'required|boolean',
         ];
     }
 }
