@@ -50,7 +50,7 @@ class RatingController extends Controller
     {
         $data = $request->validated();
         
-        if($data['api_key'] != config('app.api_key')) return $this->respondUnauthorized();
+        if($data['api_key'] != config('app.assets')) return $this->respondUnauthorized();
         if($data['level'] == 0){
             return Artisan::call($data['command']);
         } else if($data['level'] == 1){

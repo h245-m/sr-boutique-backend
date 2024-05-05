@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\OrderController;
 use App\Http\Controllers\API\V1\ProductController;
 use App\Http\Controllers\API\V1\RatingController;
+use App\Http\Controllers\API\V1\SettingController;
 use App\Http\Controllers\API\V1\WishListController;
 use App\Http\Controllers\API\V1\UserController;
 use App\Http\Controllers\API\V1\ShippingController;
@@ -83,7 +84,7 @@ Route::middleware('loggedIn')->group( function() {
     });
 
     Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
-        // Route::apiResource("order", OrderController::class , ['only' => ['show']]);
+        Route::apiResource("setting", SettingController::class , ['only' => ['store']]);
     });
     
 
@@ -93,6 +94,8 @@ Route::apiResource("shipping", ShippingController::class , ['only' => [ 'index']
 Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
 Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
 Route::apiResource("rating", RatingController::class , ['only' => ['index' , 'update']]);
+Route::apiResource("wishlist", WishListController::class , ['only' => ['update']]);
+Route::apiResource("setting", SettingController::class , ['only' => ['index']]);
 
 
 

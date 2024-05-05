@@ -8,6 +8,7 @@ use App\Http\Requests\Order\IndexOrderRequest;
 use App\Models\Order;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Models\Setting;
 use App\Models\Shipping;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -186,15 +187,26 @@ class OrderController extends Controller
         
                 $shipping = min($pricePerOrder ?? PHP_INT_MAX, $pricePerProduct ?? PHP_INT_MAX , $pricePerCategory ?? PHP_INT_MAX , $priceOfCity);
 
+                $taxPercentage = 0;
+                $taxNumber = 0;
+                $setting = Setting::first();
+
+                if ($setting) {
+                    $taxPercentage = $setting->tax;
+                }
+
                 $order->update([
                     'shipping' => $shipping,
+                    'tax' => $taxPercentage
                 ]);
+
+                $taxNumber = $taxPercentage / 100 * $totalPriceSum;
 
                 $user->cart()->detach();
 
                 DB::commit();
 
-                return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'total' => $totalPriceSum + $shipping] , "Checkout successful");
+                return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'taxPercentage' => $taxPercentage , 'taxNumber' => $taxNumber , 'total' => $totalPriceSum + $shipping + $taxNumber] , "Checkout successful");
     
             }
         } else {
@@ -221,11 +233,26 @@ class OrderController extends Controller
     
             $shipping = min($pricePerOrder ?? PHP_INT_MAX , $priceOfCity);
     
+            $taxPercentage = 0;
+            $taxNumber = 0;
+            $setting = Setting::first();
+
+            if ($setting) {
+                $taxPercentage = $setting->tax;
+            }
+
             $order->update([
                 'shipping' => $shipping,
+                'tax' => $taxPercentage
             ]);
-    
-            return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'total' => $totalPriceSum + $shipping ] , "Checkout successful");
+
+            $taxNumber = $taxPercentage / 100 * $totalPriceSum;
+
+            $user->cart()->detach();
+
+            DB::commit();
+
+            return $this->respondOk(['price' => $totalPriceSum , 'shipping' => $shipping , 'taxPercentage' => $taxPercentage , 'taxNumber' => $taxNumber , 'total' => $totalPriceSum + $shipping + $taxNumber] , "Checkout successful");
 
         }
         

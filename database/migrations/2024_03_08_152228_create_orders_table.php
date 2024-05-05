@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('name');
             $table->string('city');
+            $table->integer('tax')->default(0);
             $table->integer("shipping")->nullable();
             $table->string('postal_code');
             $table->timestamps();

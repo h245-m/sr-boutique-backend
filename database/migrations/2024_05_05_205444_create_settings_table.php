@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'last_seen')) {
-                $table->dateTime('last_seen')->default(now());
-            }
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string("language");
+            $table->string("currency");
+            $table->integer("tax");
+            $table->timestamps();
         });
     }
 
@@ -23,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('last_seen');
-        });
+        Schema::dropIfExists('settings');
     }
 };
