@@ -24,7 +24,13 @@ class ProductController extends Controller
         $query = Product::isLive(true)->isExpired(false);
 
         $query->when(isset($data['query']), function ($query) use ($data) {
-            $query->where('name', 'like', '%' . $data['query'] . '%');
+            if (isset($data['query_by'])) {
+                if ($data['query_by'] == 'name') {
+                    $query->where('name', 'like', '%' . $data['query'] . '%');
+                }else if ($data['query_by'] == 'sku') {
+                    $query->where('sku', 'like', '%' . $data['query'] . '%');
+                }
+            }
         })->when(isset($data['discount']), function ($query) {
             $query->whereRaw('priceAfter = price');
         })->when(isset($data['sort_by']), function ($query) use ($data) {
@@ -47,9 +53,14 @@ class ProductController extends Controller
         $query = Product::query();
 
         $query->when(isset($data['query']), function ($query) use ($data) {
-            $query->where('name', 'like', '%' . $data['query'] . '%');
-        })
-        ->when(isset($data['sort_by']), function ($query) use ($data) {
+            if (isset($data['query_by'])) {
+                if ($data['query_by'] == 'name') {
+                    $query->where('name', 'like', '%' . $data['query'] . '%');
+                }else if ($data['query_by'] == 'sku') {
+                    $query->where('sku', 'like', '%' . $data['query'] . '%');
+                }
+            }
+        })->when(isset($data['sort_by']), function ($query) use ($data) {
             if ($data['asc']) {
                 $query->orderBy($data['sort_by']);
             } else {

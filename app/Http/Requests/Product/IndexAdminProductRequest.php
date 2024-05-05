@@ -25,6 +25,7 @@ class IndexAdminProductRequest extends FormRequest
     {
         return [
             'query' => 'string',
+            'query_by' => 'required_with:query|string|in:name,sku',
             'live' => 'boolean',
             'discount' => 'boolean',
             'sort_by' => 'string|in:id,name,price',
