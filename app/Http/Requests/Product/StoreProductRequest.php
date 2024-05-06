@@ -29,7 +29,7 @@ class StoreProductRequest extends FormRequest
             'live' => 'required|boolean',
             'price' => 'required|min:1|max:99998.99|numeric|decimal:0,2',
             'discount' => 'required|max:99999.99|numeric|decimal:0,2|lt:price',
-            'expires_at' => 'date|format:Y-m-d H:m:s i|after:now',
+            'expires_at' => 'date_format:Y-m-d H:i:s A|after:now',
             'sku' => 'required|string|max:255|unique:products',
             'category_id' => 'required|integer|min:1|exists:categories,id',
             'image' => 'array|max:1',

@@ -29,7 +29,7 @@ class UpdateProductRequest extends FormRequest
             'long_description' => 'string|max:6000',
             'quantity' => 'integer|min:1',
             'live' => 'boolean',
-            'expires_at' => 'date|format:Y-m-d H:m:s i|after:now',
+            'expires_at' => 'date_format:Y-m-d H:i:s A|after:now',
             'price' => ['required_with:discount','max:999998.99' , 'numeric' , 'decimal:0,2'],
             'discount' => ['required_with:price','max:999999.99' , 'numeric' , 'decimal:0,2'],
             'sku' => ['string','max:255',Rule::unique('products')->ignore($this->product)],

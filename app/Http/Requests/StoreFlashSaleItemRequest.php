@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreFlashSaleRequest extends FormRequest
+class StoreFlashSaleItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,10 @@ class StoreFlashSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'expires_at' => 'required|date_format:Y-m-d H:i:s A|after:now',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|integer|exists:products,id|distinct',
-            'items.*.discount' => 'required|integer|min:1',
-            'items.*.image' => 'required|image|max:2048',
+            'flash_sale_id' => 'required|integer|exists:flash_sales,id',
+            'product_id' => 'required|integer|exists:products,id',
+            'discount' => 'required|integer|min:1',
+            'image' => 'required|image|max:2048',
         ];
     }
 }

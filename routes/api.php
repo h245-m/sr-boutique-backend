@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\CartController;
 use App\Http\Controllers\API\V1\CategoryController;
+use App\Http\Controllers\API\V1\FlashSaleController;
 use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\OrderController;
 use App\Http\Controllers\API\V1\ProductController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\API\V1\WishListController;
 use App\Http\Controllers\API\V1\UserController;
 use App\Http\Controllers\API\V1\ShippingController;
 use App\Http\Controllers\API\V1\StatsController;
+use App\Http\Controllers\API\V1\FlashSaleItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -85,8 +87,9 @@ Route::middleware('loggedIn')->group( function() {
 
     Route::middleware('hasAnyRole:setting,super_admin')->group( function() {
         Route::apiResource("setting", SettingController::class , ['only' => ['store']]);
+        Route::apiResource("flashSale", FlashSaleController::class , ['only' => ['store'  , 'index', 'destroy']]);
+        Route::apiResource("flashSaleItem", FlashSaleItemController::class , ['only' => ['store', 'update', 'destroy']]);
     });
-    
 
 });
 

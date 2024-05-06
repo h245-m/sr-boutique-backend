@@ -11,7 +11,7 @@ class UpdateFlashSaleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdateFlashSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'expires_at' => 'required|date_format:Y-m-d H:i:s A|after:now',
         ];
     }
 }

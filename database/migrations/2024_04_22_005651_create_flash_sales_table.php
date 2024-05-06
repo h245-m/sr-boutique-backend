@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('flash_sales', function (Blueprint $table) {
             $table->id();
             $table->string('expires_at');
-            $table->json('products');
             $table->timestamps();
         });
     }

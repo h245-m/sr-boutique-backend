@@ -9,9 +9,11 @@ class FlashSale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['expires_at', 'products'];
+    protected $fillable = ['expires_at'];
 
-    protected $casts = [
-        'products' => 'array',
-    ];
+
+    public function items(){
+        return $this->hasMany(FlashSaleItem::class);
+    }
+
 }
