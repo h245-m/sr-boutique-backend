@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->string('address');
-            $table->string('address_2');
+            $table->string('address_2')->nullable();
             $table->string('name');
             $table->string('city');
             $table->integer('tax')->default(0);
