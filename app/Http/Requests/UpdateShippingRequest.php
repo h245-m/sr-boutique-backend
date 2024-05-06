@@ -66,7 +66,7 @@ class UpdateShippingRequest extends FormRequest
             ), 
             Rule::when( 
                 $this->type == 'Product', 
-                'exists:products,sku', 
+                'exists:products,id', 
             ), 
             Rule::when( 
                 $this->type == 'City', 
