@@ -28,6 +28,7 @@ class StoreOrderRequest extends FormRequest
             'email' => 'required|email',
             'phone' => ['required' , new PhoneValidation],
             'address' => 'required|string|max:255',
+            'address_2' => 'string|max:255',
             'name' => 'required|string|max:255',
             'city' => ['required','string','max:255' , new ValidCityShipping()],
             'postal_code' => 'required|digits:5|integer',
