@@ -26,6 +26,7 @@ class UpdateUserRequest extends FormRequest
             'nick' => ['string' , 'between:1,255'],
             'gender' => ['string' , 'in:Male,Female'],
             'address' => ['string' , 'between:1,255'],
+            'phone' => 'phone',
             'image' => 'image|mimes:jpeg,jpg,png|max:2048',
             'roles' => 'array',
             'roles.*' => 'string|distinct|in:over_view,category,product,order,stock,shipping,admin,setting',

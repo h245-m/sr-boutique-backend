@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cart\DeleteCartRequest;
 use App\Http\Requests\Cart\StoreCartRequest;
+use App\Http\Resources\CartResource;
+use App\Http\Resources\MediaResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,10 +52,23 @@ class CartController extends Controller
     public function show(Request $request)
     {
         $user = $request->user;
-        $result = DB::table('product_user')
-        ->join('products', 'product_user.product_id', '=', 'products.id')
-        ->where('product_user.user_id', $user->id)
-        ->select(
+        // $result = DB::table('product_user')
+        // ->join('products', 'product_user.product_id', '=', 'products.id')
+        // ->where('product_user.user_id', $user->id)
+        // ->select(
+        //     'products.id',
+        //     'products.name',
+        //     'products.price',
+        //     'products.priceAfter',
+        //     'products.category_id',
+        //     'products.quantity as productQuantity',
+        //     'product_user.quantity as cartQuantity',
+        //     DB::raw('(product_user.quantity * (products.price - products.priceAfter)) as total_discount'),
+        //     DB::raw('(product_user.quantity * products.priceAfter) as total_price')
+        // )
+        // ->get();
+    
+        $result = $user->cart()->select(
             'products.id',
             'products.name',
             'products.price',
@@ -63,14 +78,13 @@ class CartController extends Controller
             'product_user.quantity as cartQuantity',
             DB::raw('(product_user.quantity * (products.price - products.priceAfter)) as total_discount'),
             DB::raw('(product_user.quantity * products.priceAfter) as total_price')
-        )
-        ->get();
-    
+        )->get();
+
         $totalPriceSum = round($result->sum('total_price'), 2);
         $totalDiscountSum = round($result->sum('total_discount'), 2);
         
         return $this->respondOk([
-            'cartItems' => $result,
+            'cartItems' => CartResource::collection($result),
             'total_price' => $totalPriceSum,
             'total_discount' => $totalDiscountSum
         ]);

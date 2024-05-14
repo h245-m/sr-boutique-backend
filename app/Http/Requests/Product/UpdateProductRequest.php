@@ -40,7 +40,7 @@ class UpdateProductRequest extends FormRequest
             'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
             'colors' => 'array|max:20',
             'colors.*' => 'string|max:255|hex_color',
-            'sizes' => 'array|max:20|distinct',
+            'sizes' => 'array|distinct',
             'sizes.*' => ['string', 'max:255', 'distinct', 'regex:^(S|M|L|X*L)$^i'],
         ];
     }
