@@ -3,17 +3,19 @@
 use App\Http\Controllers\API\V1\CartController;
 use App\Http\Controllers\API\V1\CategoryController;
 use App\Http\Controllers\API\V1\FlashSaleController;
+use App\Http\Controllers\API\V1\FlashSaleItemController;
 use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\OrderController;
 use App\Http\Controllers\API\V1\ProductController;
 use App\Http\Controllers\API\V1\RatingController;
 use App\Http\Controllers\API\V1\SettingController;
-use App\Http\Controllers\API\V1\WishListController;
-use App\Http\Controllers\API\V1\UserController;
 use App\Http\Controllers\API\V1\ShippingController;
 use App\Http\Controllers\API\V1\StatsController;
-use App\Http\Controllers\API\V1\FlashSaleItemController;
+use App\Http\Controllers\API\V1\UserController;
+use App\Http\Controllers\API\V1\WishListController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +51,7 @@ Route::middleware('loggedIn')->group( function() {
     });
 
     Route::get("message/index_chat_messages", [MessageController::class,"index_chat_messages"]);
-    
+
     Route::middleware('hasAnyRole:client,order,super_admin')->group( function() {
         Route::apiResource("order", OrderController::class , ['only' => ['show']]);
     });
@@ -57,7 +59,7 @@ Route::middleware('loggedIn')->group( function() {
     Route::middleware('hasAnyRole:over_view,super_admin')->group( function() {
         Route::get("stats", [StatsController::class , 'index']);
     });
-    
+
     Route::middleware('hasAnyRole:category,super_admin')->group( function() {
         Route::apiResource("category", CategoryController::class , ['except' => ['index', 'show']]);
         Route::get("category/show-admin", [CategoryController::class , 'show_admin' ]);
@@ -100,5 +102,5 @@ Route::apiResource("rating", RatingController::class , ['only' => ['index' , 'up
 Route::apiResource("wishlist", WishListController::class , ['only' => ['update']]);
 Route::apiResource("setting", SettingController::class , ['only' => ['index']]);
 
-
+Route::post('send-notification', [NotificationController::class, 'sendNotificationToAllUsers']);
 
