@@ -15,8 +15,10 @@ use App\Mail\RegisterMail;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -30,21 +32,21 @@ class AuthController extends Controller
         $data['otp'] = $otp;
 
         $user = User::create($data);
-        
+
 
         if ($request->hasFile('image')) {
             $user->clearMediaCollection("main");
             $user->addMediaFromRequest('image')->toMediaCollection("main");
         }
 
-        $user->assignRole('client');
+      //  $user->assignRole('client');
 
         // Mail::to($user->email)->send(new RegisterMail($otp));
 
         // $expiresAt = new DateTime('+7 minutes');
 
         // $user->token = $user->createToken(env('SANCTUM_TOKEN'), ['*'], $expiresAt)->plainTextToken;
-        
+
         return $this->respondCreated(UserResource::make($user), 'Registered successfully');
 
     }
@@ -62,13 +64,18 @@ class AuthController extends Controller
         // if (! $user->email_verified_at) {
         //     return $this->respondError('Please verify your email first');
         // }
+      //  $user = Auth::user();
+        //  return   $user;
+            $userToken = Str::random(60);
+            $user->save();
+       // $token = $user->createToken(env("SANCTUM_TOKEN"))->plainTextToken;
 
-        $token = $user->createToken(env("SANCTUM_TOKEN"))->plainTextToken;
+      //  $user->token = $token;
 
-        $user->token = $token;
-        
         return $this->respondOk([
-            "user" => UserResource::make($user)
+            "user" => UserResource::make($user),
+                            'token' =>$userToken,
+
         ] , 'Login successfully');
 
     }
@@ -82,7 +89,7 @@ class AuthController extends Controller
     //     if ($data['otp'] != $user->otp) {
     //        return $this->respondError('Wrong OTP');
     //     }
-       
+
     //     $user->update([
     //         'otp' => null,
     //         'email_verified_at' => now()
@@ -113,7 +120,7 @@ class AuthController extends Controller
         $user->update([
            'otp' => $otp
         ]);
-        
+
         return $this->respondNoContent();
 
     }
@@ -137,7 +144,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken(env("SANCTUM_TOKEN") , ['*'] , new DateTime('+7 minutes'))->plainTextToken;
-        
+
         return $this->respondOk([
             "token" => $token
         ] , 'Use this token to reset your password');
@@ -153,21 +160,21 @@ class AuthController extends Controller
         $user->update();
 
         $user->tokens()->delete();
-        
+
         return $this->respondNoContent();
     }
 
     public function logout(Request $request){
-        
+
         $request->user->currentAccessToken()->delete();
         return $this->respondNoContent();
     }
 
     public function logoutAllDevices(Request $request){
-        
+
         $request->user->tokens()->delete();
         return $this->respondNoContent();
     }
 
 }
-    
+

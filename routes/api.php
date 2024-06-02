@@ -69,10 +69,12 @@ Route::middleware('loggedIn')->group( function() {
         Route::apiResource("order", OrderController::class , ['only' => ['index' , 'update']]);
     });
 
-    Route::middleware('hasAnyRole:product,stock,super_admin')->group( function() {
-        Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
+  //  Route::middleware('hasAnyRole:product,stock,super_admin')->group( function() {
+
+
+        Route::apiResource("product", ProductController::class);
         Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
-    });
+   // });
 
     Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
         Route::apiResource("user", UserController::class);
@@ -96,7 +98,7 @@ Route::middleware('loggedIn')->group( function() {
 });
 
 Route::apiResource("shipping", ShippingController::class , ['only' => [ 'index']]);
-Route::apiResource("product", ProductController::class , ['only' => ['index', 'show']]);
+Route::apiResource("product", ProductController::class);
 Route::apiResource("category", CategoryController::class , ['only' => ['index', 'show']]);
 Route::apiResource("rating", RatingController::class , ['only' => ['index' , 'update']]);
 Route::apiResource("wishlist", WishListController::class , ['only' => ['update']]);

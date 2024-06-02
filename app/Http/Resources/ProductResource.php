@@ -31,13 +31,13 @@ class ProductResource extends JsonResource
             'additional_images' => $this->when(($request->isMethod("POST") || $request->is('api/product/*')) && $this->getMedia("additional_images") != "", MediaResource::collection($this->getMedia("additional_images"))),
             'sizes' => $this->when($this->sizes , $this->sizes),
             'colors' => $this->when($this->colors , $this->colors),
-            'randomImages' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
+            'randomImages' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () {
                 return $this->whenLoaded('randomImages' , RatingUserResource::collection($this->randomImages));
             }),
-            'ratings' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () { 
+            'ratings' => $this->when($request->is('api/product/*') && !$request->is('api/product/index_admin') && $request->isMethod("GET"), function () {
                 return $this->whenLoaded('ratings' , RatingResource::collection($this->ratings))->response()->getData();
             }),
-            
+
         ];
     }
 }

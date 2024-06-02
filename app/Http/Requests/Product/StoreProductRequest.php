@@ -9,10 +9,10 @@ class StoreProductRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
+    // public function authorize(): bool
+    // {
+    //     return true;
+    // }
 
     /**
      * Get the validation rules that apply to the request.
@@ -29,15 +29,15 @@ class StoreProductRequest extends FormRequest
             'live' => 'required|boolean',
             'price' => 'required|min:1|max:99998.99|numeric|decimal:0,2',
             'discount' => 'required|max:99999.99|numeric|decimal:0,2|lt:price',
-            'expires_at' => 'date_format:Y-m-d H:i:s A|after:now',
+            'expires_at' => 'required|date_format:Y-m-d H:i:s|after:now',
             'sku' => 'required|string|max:255|unique:products',
             'category_id' => 'required|integer|min:1|exists:categories,id',
-            'image' => 'array|max:1',
-            'image.*' => 'image|mimes:jpeg,jpg,png|max:2048',
-            'additional_images' => 'array|max:20',
-            'additional_images.*' => 'image|mimes:jpeg,jpg,png|max:2048',
+            'image' => 'required|array|max:1',
+            'image.*' => 'mimes:jpg,png|max:2048',
+            'additional_images' => 'max:20',
+            'additional_images.*' => 'image|mimes:jpg,png|max:2048',
             'colors' => 'required|array|max:20',
-            'colors.*' => 'string|max:255|distinct|hex_color',
+            'colors.*' => 'string|max:255|distinct',
             'sizes' => 'required|array|distinct',
             'sizes.*' => ['string', 'max:255', 'distinct', 'regex:^(S|M|L|X*L)$^i'],
         ];

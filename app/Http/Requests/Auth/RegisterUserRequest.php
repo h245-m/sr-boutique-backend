@@ -13,11 +13,11 @@ class RegisterUserRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    // public function authorize(): bool
+    // {
 
-        return true;
-    }
+    //     return true;
+    // }
 
     /**
      * Get the validation rules that apply to the request.
@@ -28,10 +28,10 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string' , 'between:1,255'],
-            'password' => 'required|string|confirmed|min:8|max:25',
+            'password' => 'required|string|min:8|max:25',
             'email' => 'required|email|unique:users',
-            'phone' => ['required' , 'phone'],
-            'image' => 'image,mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => ['required'],
+            'image' => 'image:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }
