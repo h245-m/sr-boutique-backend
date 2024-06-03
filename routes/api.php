@@ -69,12 +69,10 @@ Route::middleware('loggedIn')->group( function() {
         Route::apiResource("order", OrderController::class , ['only' => ['index' , 'update']]);
     });
 
-   Route::middleware('hasAnyRole:product,stock,super_admin')->group( function() {
-
-
-        Route::apiResource("product", ProductController::class);
+    Route::middleware('hasAnyRole:product,stock,super_admin')->group( function() {
+        Route::apiResource("product", ProductController::class , ['except' => ['index', 'show']]);
         Route::get("product/index_admin", [ProductController::class , 'index_admin' ]);
-   });
+    });
 
     Route::middleware('hasAnyRole:admin,super_admin')->group( function() {
         Route::apiResource("user", UserController::class);

@@ -13,7 +13,7 @@ class Product extends Model implements HasMedia
     use HasFactory , CustomRateable , InteractsWithMedia;
 
     public $fillable = ['name', 'long_description', 'short_description', 'price', 'priceAfter', 'sku', 'category_id' , 'live' , 'quantity' , 'colors' , 'sizes' , 'expires_at'];
-    
+
     protected $casts = [
         'colors' => 'json',
         'sizes' => 'json',
@@ -48,7 +48,7 @@ class Product extends Model implements HasMedia
     {
         return $query->where('live', $live);
     }
-    
+
     public function scopeIsExpired($query , bool $expires)
     {
         if($expires){

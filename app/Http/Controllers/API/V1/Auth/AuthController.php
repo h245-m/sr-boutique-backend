@@ -39,7 +39,7 @@ class AuthController extends Controller
             $user->addMediaFromRequest('image')->toMediaCollection("main");
         }
 
-      //  $user->assignRole('client');
+        $user->assignRole('client');
 
         // Mail::to($user->email)->send(new RegisterMail($otp));
 
@@ -64,19 +64,15 @@ class AuthController extends Controller
         // if (! $user->email_verified_at) {
         //     return $this->respondError('Please verify your email first');
         // }
-      //  $user = Auth::user();
-        //  return   $user;
-            $userToken = Str::random(60);
-            $user->save();
-       // $token = $user->createToken(env("SANCTUM_TOKEN"))->plainTextToken;
 
-      //  $user->token = $token;
+      $token = $user->createToken(env("SANCTUM_TOKEN"))->plainTextToken;
 
-        return $this->respondOk([
-            "user" => UserResource::make($user),
-                            'token' =>$userToken,
+      $user->token = $token;
 
-        ] , 'Login successfully');
+      return $this->respondOk([
+          "user" => UserResource::make($user)
+      ] , 'Login successfully');
+
 
     }
 
