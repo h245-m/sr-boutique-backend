@@ -16,9 +16,13 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
      */
+
+
     public function index(IndexProductRequest $request)
     {
+
         $data = $request->validated();
 
         $query = Product::isLive(true)->isExpired(false);
@@ -86,24 +90,46 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $data = $request->validated(); 
+        $data = $request->validated();
         $data['priceAfter'] = $data['price'] - $data['discount'];
 
-        $product = Product::create($data);
-
         if ($request->hasFile('image')) {
-            $product->addMediaFromRequest('image')->toMediaCollection("main");
+            $files = $request->file('image');
+            foreach ($files as $file) {
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('uploads'), $filename);
+            }
         }
+            if ($request->hasFile('additional_images')) {
+                $files = $request->file('additional_images');
+                foreach ($files as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('uploads'), $filename);
+                }
+            }
 
-        if ($request->hasFile('additional_images')) {
-            $product
-                ->addMultipleMediaFromRequest(['additional_images'])
-                ->each(function ($fileAdder) {
-                    $fileAdder->toMediaCollection("additional_images");
-                });
-        }
+        $product = Product::create($data);
+                if (isset($filename)) {
+                $product->image = $filename;
+             }
+                if (isset($filename)) {
+                $product->additional_images = $filename;
+             }
+             $product->save();
 
-        return $this->respondCreated(ProductResource::make($product), 'product created successfully');
+        // if ($request->hasFile('additional_images')) {
+        //     $product
+        //         ->addMultipleMediaFromRequest(['additional_images'])
+        //         ->each(function ($fileAdder) {
+        //             $fileAdder->toMediaCollection("additional_images");
+        //         });
+       // }
+
+        return response()->json(['message'=>'product created successfully',
+        'data'=> $product
+        ]) ;
     }
 
     /**
@@ -129,33 +155,59 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $data = $request->validated();
 
-        if (isset($data['discount'])){
-            $data['priceAfter'] = $data['price'] - $data['discount'];
-        }
-        
-        if ($request->hasFile('image')) {
+            $data = $request->validated();
 
-            if ($request->hasFile('image')) {
-                $product->clearMediaCollection("main");
-                $product->addMediaFromRequest('image')->toMediaCollection("main");
+            if (isset($data['discount'])){
+                $data['priceAfter'] = $data['price'] - $data['discount'];
+            }
+
+           $product = Product::findOrFail ($product->id);
+
+            if ($product->image) {
+                $oldImagePath = public_path('uploads') . '/' . $product->image;
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            if ($product->additional_images) {
+                $oldAdditionalImages = json_decode($product->additional_images, true);
+                if (is_array($oldAdditionalImages)) {
+                    foreach ($oldAdditionalImages as $oldImagePath) {
+                        $fullOldImagePath = public_path('uploads') . '/' . $oldImagePath;
+                        if (file_exists($fullOldImagePath)) {
+                            unlink($fullOldImagePath);
+                        }
+                    }
+                }
+            }
+
+            if ($request->hasFile('image')){
+                $file = $request->file('image');
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . '_image.' . $extension;
+                $file->move(public_path('uploads'), $filename);
+                $product->image = $filename;
             }
 
             if ($request->hasFile('additional_images')) {
-                $product->clearMediaCollection("additional_images");
-
-                $product
-                    ->addMultipleMediaFromRequest(['additional_images'])
-                    ->each(function ($fileAdder) {
-                        $fileAdder->toMediaCollection("additional_images");
-                    });
+                $additionalImages = [];
+                foreach ($request->file('additional_images') as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                    $file->move(public_path('uploads'), $filename);
+                    $product->additional_images= $filename;
+                }
+                $product->additional_images = json_encode($additionalImages);
             }
+
+            // تحديث بيانات المنتج
+            $product->update($data);
+
+            return $this->respondOk(ProductResource::make($product), 'Product updated successfully');
         }
 
-        $product->update($data);
-        return $this->respondOk(ProductResource::make($product), 'Product updated successfully');
-    }
 
     /**
      * Remove the specified resource from storage.

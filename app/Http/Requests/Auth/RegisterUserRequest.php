@@ -28,10 +28,10 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string' , 'between:1,255'],
-            'password' => 'required|string|confirmed|min:8|max:25',
+            'password' => 'required|string|min:8|max:25',
             'email' => 'required|email|unique:users',
-            'phone' => ['required' , 'phone'],
-            'image' => 'image,mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => ['required'],
+            'image' => 'image:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }

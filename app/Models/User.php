@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\GenderType;
 use App\Enums\OAuthType;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -90,5 +92,6 @@ class User extends Authenticatable implements HasMedia
     public function chat_rooms(){
         return $this->hasMany(ChatRoom::class , 'user1_id')->orWhere('user2_id' , $this->id);
     }
-}
 
+
+}
